@@ -1,0 +1,18 @@
+model:
+  onnx_path: ../saved_models/mnist_fcnn.onnx
+data:
+  dataset: MNIST
+  start: 0
+  end: 100
+specification:
+  norm: .inf
+  epsilon: 0.02
+attack:
+  pgd_order: skip
+solver:
+  batch_size: 1024
+bab:
+  timeout: 30
+  branching:
+    method: babsr
+    

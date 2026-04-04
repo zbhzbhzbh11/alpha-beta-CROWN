@@ -1,0 +1,4 @@
+run_id,config,verified_acc,safe,unsafe,timeout,mean_time_s,max_time_s,log_path
+baseline,mnist_baseline.yaml,91.0,91,0,9,3.821355220605719,49.16927480697632,项目书/实验日志/2026-03-14_mnist_baseline_0_100.log
+auto,mnist_baseline_auto.yaml,91.0,91,0,9,5.76995307204873,51.562230825424194,项目书/实验日志/2026-03-14_mnist_auto_0_100.log
+kfsb,mnist_baseline_kfsb.yaml,92.0,92,0,8,3.169188919245201,34.270418882369995,项目书/实验日志/2026-03-14_mnist_kfsb_0_100.log

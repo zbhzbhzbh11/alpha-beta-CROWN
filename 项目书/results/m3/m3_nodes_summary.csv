@@ -1,0 +1,6 @@
+﻿run_id,domains_visited_last,domains_visited_max,verified_acc,timeout,log_path
+auto,96,59484,91.0,9,/home/han/alpha-beta-CROWN/项目书/results/m3/logs/auto.log
+baseline,13014,43676,91.0,9,/home/han/alpha-beta-CROWN/项目书/results/m3/logs/baseline.log
+kfsb,62848,87504,92.0,8,/home/han/alpha-beta-CROWN/项目书/results/m3/logs/kfsb.log
+kfsb_candidates5,72224,87068,93.0,7,/home/han/alpha-beta-CROWN/项目书/results/m3/logs/kfsb_candidates5.log
+kfsb_reduceop_max,51614,83454,92.0,8,/home/han/alpha-beta-CROWN/项目书/results/m3/logs/kfsb_reduceop_max.log

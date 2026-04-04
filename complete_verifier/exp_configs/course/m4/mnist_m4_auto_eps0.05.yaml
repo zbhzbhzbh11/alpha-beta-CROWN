@@ -1,0 +1,26 @@
+general:
+  complete_verifier: auto
+model:
+  onnx_path: ../saved_models/mnist_fcnn.onnx
+data:
+  dataset: MNIST
+  start: 0
+  end: 100
+specification:
+  norm: .inf
+  epsilon: 0.05
+attack:
+  pgd_order: skip
+solver:
+  batch_size: 128
+  auto_enlarge_batch_size: false
+  mip:
+    parallel_solvers: 4
+    solver_threads: 1
+    refine_neuron_timeout: 10
+bab:
+  timeout: 15
+  branching:
+    method: babsr
+    candidates: 3
+    reduceop: min

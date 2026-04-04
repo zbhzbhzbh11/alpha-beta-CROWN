@@ -230,7 +230,8 @@ class BabsrBranching(NeuronBranchingHeuristic):
                             self.icp_score_counter = 0
                     else:
                         random_dict[b] = random_dict.get(b, 0) + 1
-                        for preferred_layer in np.random.choice(len(self.net.split_indices), len(self.net.split_indices), replace=False):
+                        # split_indices may not exist in newer LiRPANet; split_nodes is the stable source.
+                        for preferred_layer in np.random.choice(len(self.net.split_nodes), len(self.net.split_nodes), replace=False):
                             if len(mask_item[preferred_layer].nonzero(as_tuple=False)) != 0:
                                 decision[b].append(
                                     (preferred_layer, mask_item[preferred_layer].nonzero(as_tuple=False)[0].item()))
@@ -238,7 +239,12 @@ class BabsrBranching(NeuronBranchingHeuristic):
                                 break
                         self.icp_score_counter = 0
         if random_dict:
-            print(f'Random branching decision used for {{example_idx:n_random}}: {random_dict}')
+            # Avoid printing thousands of entries when batch size is large.
+            preview_items = list(random_dict.items())[:10]
+            preview = dict(preview_items)
+            print(
+                'Random branching decisions used in '
+                f'{len(random_dict)} examples (showing up to 10): {preview}')
 
         split_depth = min([len(d) for d in decision])
 

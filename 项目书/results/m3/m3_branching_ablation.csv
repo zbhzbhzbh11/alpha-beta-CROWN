@@ -1,0 +1,6 @@
+﻿run_id,config,verified_acc,safe,unsafe,timeout,mean_time_s,max_time_s,log_path
+auto,mnist_m3_auto.yaml,91.0,91,0,9,6.14359421090837,50.95938587188721,/home/han/alpha-beta-CROWN/项目书/results/m3/logs/auto.log
+baseline,mnist_m3_baseline.yaml,91.0,91,0,9,4.056140150721434,56.265955209732056,/home/han/alpha-beta-CROWN/项目书/results/m3/logs/baseline.log
+kfsb,mnist_m3_kfsb.yaml,92.0,92,0,8,3.597621262323445,35.65301728248596,/home/han/alpha-beta-CROWN/项目书/results/m3/logs/kfsb.log
+kfsb_candidates5,mnist_m3_kfsb_candidates5.yaml,93.0,93,0,7,3.2435180949139375,35.90191054344177,/home/han/alpha-beta-CROWN/项目书/results/m3/logs/kfsb_candidates5.log
+kfsb_reduceop_max,mnist_m3_kfsb_reduceop_max.yaml,92.0,92,0,8,3.4441170061666075,37.85272026062012,/home/han/alpha-beta-CROWN/项目书/results/m3/logs/kfsb_reduceop_max.log

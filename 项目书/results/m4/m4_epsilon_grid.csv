@@ -1,0 +1,13 @@
+﻿strategy,epsilon,verified_acc,safe,unsafe,timeout,mean_time_s,max_time_s,log_path
+auto,0.01,100.0,100,0,0,0.43317301233150246,10.212934017181396,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/auto_eps0.01.log
+auto,0.02,91.0,91,0,9,5.359129281572881,45.35758900642395,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/auto_eps0.02.log
+auto,0.03,62.0,62,0,38,22.838141405818273,69.05192995071411,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/auto_eps0.03.log
+auto,0.05,5.0,5,0,95,23.373957081441475,37.05229306221008,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/auto_eps0.05.log
+baseline,0.01,100.0,100,0,0,0.5539723605268362,15.878573656082153,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/baseline_eps0.01.log
+baseline,0.02,91.0,91,0,9,3.9308304479814082,63.17364859580994,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/baseline_eps0.02.log
+baseline,0.03,65.0,65,0,35,14.274032033213862,59.193849086761475,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/baseline_eps0.03.log
+baseline,0.05,12.0,12,0,88,18.786670465540716,21.756320476531982,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/baseline_eps0.05.log
+kfsb,0.01,100.0,100,0,0,0.31399452645806075,6.817678928375244,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/kfsb_eps0.01.log
+kfsb,0.02,92.0,92,0,8,3.2679648516931996,42.402673959732056,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/kfsb_eps0.02.log
+kfsb,0.03,68.0,68,0,32,6.660579152943186,16.191529989242554,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/kfsb_eps0.03.log
+kfsb,0.05,11.0,11,0,89,11.383897791498175,12.844555377960205,/home/han/alpha-beta-CROWN/项目书/results/m4/logs/kfsb_eps0.05.log
