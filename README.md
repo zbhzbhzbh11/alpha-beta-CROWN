@@ -1,341 +1,524 @@
-α,β-CROWN (alpha-beta-CROWN): A Fast and Scalable Neural Network Verifier with Efficient Bound Propagation
-======================
+# ReLU 全连接神经网络鲁棒性验证实验项目
 
-<p align="center">
-<a href="https://abcrown.org/"><img src="https://www.huan-zhang.com/images/upload/alpha-beta-crown/logo_2022.png" width="36%"></a>
-</p>
+[English](#english-version) | [中文](#中文版本)
 
-α,β-CROWN (alpha-beta-CROWN) is a neural network verifier based on an efficient
-linear bound propagation framework and branch and bound. It can be accelerated
-efficiently on **GPUs** and can scale to relatively large convolutional
-networks (e.g., millions of parameters). It also supports a wide range of
-neural network architectures (e.g., **CNN**, **ResNet**, and various activation
-functions), thanks to the versatile
-**[auto\_LiRPA](http://github.com/Verified-Intelligence/auto_LiRPA) library developed by us**.
-α,β-CROWN can provide provable robustness guarantees against adversarial
-attacks and can also verify other general properties of neural networks,
-such as [Lyapunov stability](https://arxiv.org/pdf/2404.07956) in control.
+---
 
-α,β-CROWN is the **winning verifier** in [VNN-COMP
-2021](https://sites.google.com/view/vnn2021), [VNN-COMP
-2022](https://sites.google.com/view/vnn2022), [VNN-COMP
-2023](https://sites.google.com/view/vnn2023), [VNN-COMP 2024](https://sites.google.com/view/vnn2024), and [VNN-COMP 2025](https://sites.google.com/view/vnn2025) (International Verification of
-Neural Networks Competition) with the highest total score, outperforming many
-other neural network verifiers on a wide range of benchmarks over 5 years.
-Details of competition results can be found in [VNN-COMP 2021
-slides](https://docs.google.com/presentation/d/1oM3NqqU03EUqgQVc3bGK2ENgHa57u-W6Q63Vflkv000/edit#slide=id.ge4496ad360_14_21),
-[report](https://arxiv.org/abs/2109.00498),
-[VNN-COMP 2022 report](https://arxiv.org/pdf/2212.10376.pdf),
-[VNN-COMP 2023 slides](https://github.com/ChristopherBrix/vnncomp2023_results/blob/main/SCORING/slides.pdf) and [report](https://arxiv.org/abs/2312.16760),
-and [VNN-COMP 2024 slides](https://docs.google.com/presentation/d/1RvZWeAdTfRC3bNtCqt84O6IIPoJBnF4jnsEvhTTxsPE/edit) and [report](https://www.arxiv.org/pdf/2412.19985), [VNN-COMP 2025 slides](https://docs.google.com/presentation/d/1ep-hGGotgWQF6SA0JIpQ6nFqs2lXoyuLMM-bORzNvrQ/edit?slide=id.p#slide=id.p).
+## 中文版本
 
-The α,β-CROWN team is created and led by Prof. [Huan Zhang](https://huan-zhang.com/) at UIUC with contributions from multiple institutions. See the **list of contributors** [below](#developers-and-copyright).
-α,β-CROWN combines our efforts in neural network verification in a series of
-papers building up the bound propagation framework since 2018. See [Publications](#publications) below.
+### 项目概述
 
-News (2025 - )
-----------------------
-- α,β-CROWN now provides a **new Python API** that allows users to run the verifier programmatically in Python **without** manually exporting ONNX models, writing VNNLIB specifications, or preparing config files. A good set of **default configuration automatically handles diverse verification scenarios**, while all options remain fully customizable through the API. (**See [API documentation](complete_verifier/docs/abcrown_api.md)**).
-- α,β-CROWN is the winner of [VNN-COMP 2025](https://sites.google.com/view/vnn2025) and is **ranked top-1** in all [scored benchmarks](https://github.com/VNN-COMP/vnncomp2025_results/blob/main/SCORING-SMALL-TOL/latex/main.pdf). (08/2025)
-- Bounding of computation graphs containing Jacobian operators now supports more nonlinear operators (e.g., ```tanh```, ```sigmoid```), enabling verification of [continuous-time Lyapunov stability](https://github.com/Verified-Intelligence/Two-Stage_Neural_Controller_Training). (12/2025)
-- Clip-and-Verify ([Zhou et al., NeurIPS 2025](https://openreview.net/pdf?id=HuSSR12Yot)) efficiently handles linear constraints and can significantly reduce the number of subproblems handled during BaB. It consistently tightens bounds across multiple benchmarks. (12/2025)
+本项目基于 **α,β-CROWN** 工具，针对 ReLU 激活函数的全连接神经网络（FCNN）进行鲁棒性验证实验研究。通过对比不同验证策略（baseline、auto、kfsb）在 MNIST 数据集上的表现，系统性评估了分支策略优化对验证效率的影响，并在多个扰动半径（ε=0.01–0.05）下验证了策略的稳定性。
 
-Supported Features
-----------------------
+**核心成果**：
+- ✅ 完成 M1–M4 四个里程碑实验
+- ✅ 提出改进配置 `kfsb + candidates=5`，在 ε=0.02 下达到 **93.0% 验证准确率**（baseline 91.0%）
+- ✅ 超时样本数从 9 降至 **7**，平均验证时间从 4.06s 降至 **3.24s**
+- ✅ 完整的证据链：配置文件、日志、CSV 汇总、可视化图表
 
-<p align="center">
-<a href="https://arxiv.org/pdf/2103.06624.pdf"><img src="https://www.huan-zhang.com/images/upload/alpha-beta-crown/banner.png" width="100%"></a>
-</p>
+---
 
-Our verifier consists of the following core algorithms:
+### 快速开始
 
-* **CROWN** ([Zhang et al., 2018](https://arxiv.org/pdf/1811.00866.pdf)): the basic linear bound propagation framework for neural networks.
-* **auto_LiRPA** ([Xu et al. 2020](https://arxiv.org/pdf/2002.12920.pdf)): linear bound propagation for general computational graphs.
-* **α-CROWN** ([Xu et al., 2021](https://arxiv.org/pdf/2011.13824.pdf)): incomplete verification with gradient optimized bound propagation.
-* **β-CROWN** ([Wang et al., 2021](https://arxiv.org/pdf/2103.06624.pdf)): complete verification with bound propagation and branch and bound for ReLU networks.
-* **GenBaB** ([Shi et al., 2024](https://arxiv.org/pdf/2405.21063.pdf)): Branch and bound for general nonlinear functions.
-* **GCP-CROWN** ([Zhang et al., 2022](https://arxiv.org/pdf/2208.05740.pdf)): CROWN-like bound propagation with general cutting plane constraints.
-* **BaB-Attack** ([Zhang et al., 2022](https://proceedings.mlr.press/v162/zhang22ae/zhang22ae.pdf)): Branch and bound based adversarial attack for tackling hard instances.
-* **MIP** ([Tjeng et al., 2017](https://arxiv.org/pdf/1711.07356.pdf)): mixed integer programming (slow but can be useful on small models).
-* **INVPROP** ([Kotha et al., 2023](https://arxiv.org/pdf/2302.01404.pdf)): tightens bounds with constraints on model outputs, and computes provable preimages for neural networks.
-* **BICCOS** ([Zhou et al., 2024](https://openreview.net/pdf?id=FwhM1Zpyft)): an effective cutting plane generation method outperforming the MIP-based cuts in GCP-CROWN.
+#### 环境要求
+- **操作系统**: Linux (WSL2 / Ubuntu 20.04+)
+- **GPU**: NVIDIA GPU with CUDA 11.8+ (tested on RTX 4060 Laptop)
+- **Python**: 3.10+
+- **依赖**: PyTorch 2.4.1+, auto_LiRPA
 
-The bound propagation engine in α,β-CROWN is implemented as a separate library, **[auto_LiRPA](https://github.com/Verified-Intelligence/auto_LiRPA) ([Xu et al. 2020](https://arxiv.org/pdf/2002.12920.pdf))**, for computing symbolic bounds for general computational graphs. We support these neural network architectures:
+#### 安装步骤
 
-* Layers: fully connected (FC), convolutional (CNN), pooling (average pool and max pool), transposed convolution
-* Activation functions or nonlinear functions: ReLU, sigmoid, tanh, arctan, sin, cos, tan, gelu, pow, multiplication and self-attention
-* Residual connections, Transformers, LSTMs, and other irregular graphs
-
-We support the following verification specifications:
-
-* Lp norm perturbation (p=1,2,infinity, as often used in robustness verification)
-* VNNLIB format input (at most two layers of AND/OR clause, as used in VNN-COMP)
-* Any linear specifications on neural network output (which can be added as a linear layer)
-
-We provide many example configurations in
-[`complete_verifier/exp_configs`](/complete_verifier/exp_configs) directory to
-start with:
-* MNIST: MLP and CNN models (small models to help you get started)
-* CIFAR-10, CIFAR-100, TinyImageNet: CNN and ResNet models with high dimensional inputs
-* ACASXu, NN4sys, ML4ACOPF and other low input dimension models
-
-And more examples in other repositories:
-* Stability verification of NN controllers for discrete-time systems: [Verified-Intelligence/Lyapunov_Stable_NN_Controllers](https://github.com/Verified-Intelligence/Lyapunov_Stable_NN_Controllers) and continuous-time systems: [Verified-Intelligence/Two-Stage_Neural_Controller_Training](https://github.com/Verified-Intelligence/Two-Stage_Neural_Controller_Training).
-* Branch-and-bound for models with non-ReLU nonlinearities and high dimensional inputs: [GenBaB](https://huggingface.co/datasets/zhouxingshi/GenBaB)
-
-See the [Guide on Algorithm
-Selection](/complete_verifier/docs/abcrown_usage.md#guide-on-algorithm-selection)
-to find the most suitable example to get started.
-
-Installation and Setup
-----------------------
-
-α,β-CROWN is tested on Python 3.11 and PyTorch 2.8.0 (recent versions may also work).
-It can be installed
-easily into a conda environment. If you don't have conda, you can install
-[miniconda](https://docs.conda.io/en/latest/miniconda.html).
-
-Clone our verifier including the [auto_LiRPA](https://github.com/Verified-Intelligence/auto_LiRPA) submodule:
+1. **克隆仓库**（包含 auto_LiRPA 子模块）
 ```bash
-git clone --recursive https://github.com/Verified-Intelligence/alpha-beta-CROWN.git
+git clone --recursive https://github.com/YOUR_USERNAME/alpha-beta-CROWN.git
+cd alpha-beta-CROWN
 ```
 
-Setup the conda environment from [`environment.yaml`](complete_verifier/environment.yaml)
-with pinned dependencies versions (CUDA>=12.8 is required):
+2. **创建 Conda 环境**
 ```bash
-# Remove the old environment, if necessary.
-conda deactivate; conda env remove --name alpha-beta-crown
-# install all dependents into the alpha-beta-crown environment
-conda env create -f complete_verifier/environment.yaml --name alpha-beta-crown
-# activate the environment
-conda activate alpha-beta-crown
+conda create -n abcrown python=3.10
+conda activate abcrown
 ```
 
-Alternatively, you may use `pip`
-(if you want to add α,β-CROWN to your existing environment,
-or if your system is not compatible with [`environment.yaml`](complete_verifier/environment.yaml)).
-It is highly recommended to have a pre-installed PyTorch that matches your system and our version requirement
-(see [PyTorch Get Started](https://pytorch.org/get-started)).
-Then, you can run:
+3. **安装依赖**
 ```bash
-(cd auto_LiRPA; pip install -e .)
+# 安装 PyTorch (CUDA 11.8)
+pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu118
+
+# 安装 auto_LiRPA
+cd auto_LiRPA
+pip install -e .
+cd ..
+
+# 安装其他依赖
 pip install -r complete_verifier/requirements.txt
 ```
 
-Unless you use MIP-based verification algorithms, a Gurobi license is *not needed* (in most use cases).
-If you want to use MIP-based verification algorithms (which are feasible only for small models), you need to
-install a Gurobi license with the `grbgetkey` command.  If you don't have
-access to a license, by default, the above installation procedure includes a
-free and restricted license, which is actually sufficient for many relatively
-small NNs. If you use the GCP-CROWN verifier, an installation of IBM CPlex
-solver is required. Instructions to install the CPlex solver can be found
-in the [VNN-COMP benchmark instructions](/complete_verifier/docs/vnn_comp.md#installation).
+4. **验证安装**
+```bash
+cd complete_verifier
+python abcrown.py --config exp_configs/mnist_crown_general.yaml
+```
 
-If you want to run α,β-CROWN verifier on the VNN-COMP benchmarks
-(e.g., to make a comparison to a new verifier), you can follow [this
-guide](/complete_verifier/docs/vnn_comp.md).
+---
 
-Instructions
-----------------------
+### 实验复现
 
-The verifier can be invoked through the 
-**[new Python API](complete_verifier/docs/abcrown_api.md)** or through 
-the command-line interface with configuration files. Checkout the 
-[API documentation](complete_verifier/docs/abcrown_api.md) for API usage.
-For the command-line interface, we provide a 
-unified front-end for the verifier, `abcrown.py`.  All parameters
-for the verifier are defined in a `yaml` config file. For example, to run
-robustness verification on a CIFAR-10 ResNet network, you just run:
+#### 数据准备
+模型文件已包含在仓库中：
+- `saved_models/mnist_fcnn.onnx` - MNIST 全连接网络（ONNX 格式）
+- `saved_models/mnist_fcnn.pth` - PyTorch 权重文件
+
+#### M2: 基线策略对比（ε=0.02, n=0–100）
 
 ```bash
-conda activate alpha-beta-crown  # activate the conda environment
-cd complete_verifier
-python abcrown.py --config exp_configs/tutorial_examples/cifar_resnet_2b.yaml
+cd 项目书/scripts
+bash run_m2_strategy_compare.sh
 ```
 
-You can find explanations for the most useful parameters in [this example config
-file](/complete_verifier/exp_configs/tutorial_examples/cifar_resnet_2b.yaml). For detailed usage
-and tutorial examples, please see the [Usage
-Documentation](/complete_verifier/docs/abcrown_usage.md).  We also provide a
-large range of examples in the
-[`complete_verifier/exp_configs`](/complete_verifier/exp_configs) folder.
+**预期输出**：
+- 日志文件：`项目书/实验日志/2026-03-14_mnist_*_0_100.log`
+- CSV 汇总：`项目书/results/m2/m2_strategy_compare_0_100.csv`
+- 可视化图表：`项目书/results/m2/figures/*.png`
 
+**结果预览**：
+| 策略 | 验证准确率 | 超时数 | 平均时间(s) |
+|------|-----------|--------|------------|
+| baseline | 91.0% | 9 | 3.82 |
+| auto | 91.0% | 9 | 5.77 |
+| kfsb | **92.0%** | **8** | **3.17** |
 
-Publications
-----------------------
+#### M3: 分支策略消融实验（主线A）
 
-If you use our verifier in your work, **please kindly cite our papers**:
-- **CROWN** ([Zhang
-et al., 2018](https://arxiv.org/pdf/1811.00866.pdf)),
-**auto_LiRPA** ([Xu et al., 2020](https://arxiv.org/pdf/2002.12920.pdf)),
-**α-CROWN** ([Xu et al., 2021](https://arxiv.org/pdf/2011.13824.pdf)),
-**β-CROWN** ([Wang et al., 2021](https://arxiv.org/pdf/2103.06624.pdf)),
-**GenBaB** ([Shi et al. 2024](https://arxiv.org/pdf/2405.21063.pdf)),
-**GCP-CROWN** ([Zhang et al., 2022](https://arxiv.org/pdf/2208.05740.pdf)), and
-**BICCOS** ([Zhou et al., NeurIPS 2024](https://openreview.net/pdf?id=FwhM1Zpyft)).
-- **[Kotha et al., 2023](https://arxiv.org/pdf/2302.01404.pdf)** if you use constraints on the outputs of neural networks.
-- **[Salman et al., 2019](https://arxiv.org/pdf/1902.08722)**,
-if your work involves the convex relaxation of the NN verification.
-- **[Zhang et al.
-2022](https://proceedings.mlr.press/v162/zhang22ae/zhang22ae.pdf)**,
-if you use our branch-and-bound based adversarial attack (falsifier).
-We provide bibtex entries at the end of this section.
+```bash
+cd 项目书/scripts
+bash run_m3_branching_ablation.sh
+```
 
-α,β-CROWN represents our continued efforts on neural network verification:
+**预期输出**：
+- 日志文件：`项目书/results/m3/logs/*.log`
+- CSV 汇总：`项目书/results/m3/m3_branching_ablation.csv`
+- 节点统计：`项目书/results/m3/m3_nodes_summary.csv`
+- 可视化图表：`项目书/results/m3/figures/*.png`
 
-* **CROWN** ([Zhang et al. NeurIPS 2018](https://arxiv.org/pdf/1811.00866.pdf)) is a very efficient bound propagation based verification algorithm. CROWN propagates a linear inequality backward through the network and utilizes linear bounds to relax activation functions.
+**结果预览**：
+| 配置 | 验证准确率 | 超时数 | 平均时间(s) |
+|------|-----------|--------|------------|
+| baseline | 91.0% | 9 | 4.06 |
+| auto | 91.0% | 9 | 6.14 |
+| kfsb | 92.0% | 8 | 3.60 |
+| kfsb_reduceop_max | 92.0% | 8 | 3.44 |
+| **kfsb_candidates5** | **93.0%** | **7** | **3.24** |
 
-* The **"convex relaxation barrier"** ([Salman et al., NeurIPS 2019](https://arxiv.org/pdf/1902.08722)) paper concludes that optimizing the ReLU relaxation allows CROWN (referred to as a "greedy" primal space solver) to achieve the same solution as linear programming (LP) based verifiers.
+#### M4: Epsilon 网格扫描（辅线B）
 
-* **auto_LiRPA** ([Xu et al., NeurIPS 2020](https://arxiv.org/pdf/2002.12920.pdf)) is a generalization of CROWN on general computational graphs and we also provide an efficient GPU implementation, the [auto\_LiRPA](https://github.com/Verified-Intelligence/auto_LiRPA) library.
+```bash
+cd 项目书/scripts
+bash run_m4_epsilon_grid.sh
+```
 
-* **α-CROWN** (sometimes referred to as optimized CROWN or optimized LiRPA) is used in the Fast-and-Complete verifier ([Xu et al., ICLR 2021](https://arxiv.org/pdf/2011.13824.pdf)), which jointly optimizes intermediate layer bounds and final layer bounds in CROWN via variable α. α-CROWN typically has greater power than LP since LP cannot cheaply tighten intermediate layer bounds.
+**预期输出**：
+- 日志文件：`项目书/results/m4/logs/*.log`
+- CSV 汇总：`项目书/results/m4/m4_epsilon_grid.csv`
+- 可视化图表：`项目书/results/m4/figures/*.png`
 
-* **β-CROWN** ([Wang et al., NeurIPS 2021](https://arxiv.org/pdf/2103.06624.pdf)) incorporates ReLU split constraints in branch and bound (BaB) into the CROWN bound propagation procedure via an additional optimizable parameter β. The combination of efficient and GPU-accelerated bound propagation with branch and bound produces a powerful and scalable neural network verifier.
+**结果预览**（kfsb 策略）：
+| ε | 验证准确率 | 超时数 | 平均时间(s) |
+|---|-----------|--------|------------|
+| 0.01 | 100.0% | 0 | 0.31 |
+| 0.02 | 92.0% | 8 | 3.27 |
+| 0.03 | 68.0% | 32 | 6.66 |
+| 0.05 | 11.0% | 89 | 11.38 |
 
-* **BaB-Attack** ([Zhang et al., ICML 2022](https://proceedings.mlr.press/v162/zhang22ae/zhang22ae.pdf)) is a strong falsifier (adversarial attack) based on branch and bound, which can find adversarial examples for hard instances where gradient or input-space-search based methods cannot succeed.
+---
 
-* **GCP-CROWN** ([Zhang et al., NeurIPS 2022](https://arxiv.org/pdf/2208.05740.pdf)) enables the use of general cutting planes methods for neural network verification in a GPU-accelerated and very efficient bound propagation framework. Cutting planes can significantly strengthen bound tightness.
-
-* **INVPROP** ([Kotha et al., NeurIPS 2023](https://arxiv.org/pdf/2302.01404.pdf)) handles constraints on the outputs of neural networks which enables tight and provable bounds on the preimage of a neural network. We demonstrated several applications, including OOD detection, backward reachability analysis for NN-controlled systems, and tightening bounds for robustness verification.
-
-* **BICCOS** ([Zhou et al., NeurIPS 2024](https://openreview.net/pdf?id=FwhM1Zpyft)) generates effective cutting planes during branch-and-bound to tighten verification bounds. The cutting plane generation process is efficient and scalable and does not require a MIP solver.
-
-* **GenBaB** ([Shi et al., TACAS 2025](https://arxiv.org/pdf/2405.21063.pdf)) enables branch-and-bound based verification for general nonlinear functions, achieving significant improvements on verifying neural networks with non-ReLU nonlinearties (such as Transformers), and enabling new applications that contain complicated nonlinear functions on the output of neural networks, such as [ML for AC Optimal Power Flow](https://github.com/AI4OPT/ml4acopf_benchmark).
-
-* **Clip-and-Verify** ([Zhou et al., NeurIPS 2025](https://openreview.net/pdf?id=HuSSR12Yot)) efficiently handles linear constraints and can significantly reduce the number of subproblems handled during BaB. It consistently tightens bounds across multiple benchmarks, significantly accelerating challenging verification tasks from research on [provably stable neural network control systems](https://github.com/Verified-Intelligence/Two-Stage_Neural_Controller_Training).
+### 项目结构
 
 ```
-@article{zhang2018efficient,
-  title={Efficient Neural Network Robustness Certification with General Activation Functions},
-  author={Zhang, Huan and Weng, Tsui-Wei and Chen, Pin-Yu and Hsieh, Cho-Jui and Daniel, Luca},
-  journal={Advances in Neural Information Processing Systems},
-  volume={31},
-  pages={4939--4948},
-  year={2018},
-  url={https://arxiv.org/pdf/1811.00866.pdf}
-}
+alpha-beta-CROWN/
+├── saved_models/
+│   ├── mnist_fcnn.onnx          # MNIST 全连接模型
+│   └── mnist_fcnn.pth
+├── 项目书/
+│   ├── scripts/                  # 实验脚本
+│   │   ├── run_m2_strategy_compare.sh
+│   │   ├── run_m3_branching_ablation.sh
+│   │   ├── run_m4_epsilon_grid.sh
+│   │   ├── summarize_m2_results.py
+│   │   ├── summarize_m3_results.py
+│   │   ├── summarize_m4_results.py
+│   │   ├── plot_m2_results.py
+│   │   ├── plot_m3_results.py
+│   │   └── plot_m4_results.py
+│   ├── results/                  # 实验结果
+│   │   ├── m2/                   # M2 基线对比
+│   │   │   ├── m2_strategy_compare_0_100.csv
+│   │   │   └── figures/
+│   │   ├── m3/                   # M3 消融实验
+│   │   │   ├── m3_branching_ablation.csv
+│   │   │   ├── m3_nodes_summary.csv
+│   │   │   ├── logs/
+│   │   │   └── figures/
+│   │   ├── m4/                   # M4 epsilon 网格
+│   │   │   ├── m4_epsilon_grid.csv
+│   │   │   ├── logs/
+│   │   │   └── figures/
+│   │   ├── 阶段实验结果总汇_2026-04-03.md
+│   │   ├── 结果汇总报告_2026-04-04.md
+│   │   └── 开题预期成效对照清单_2026-04-04.md
+│   ├── 软件学报风格论文初稿.md      # 论文初稿
+│   ├── 开题报告.md
+│   └── 作业题纲.md
+├── complete_verifier/            # α,β-CROWN 核心代码
+└── auto_LiRPA/                   # 子模块：线性界传播库
+```
 
-@article{xu2020automatic,
-  title={Automatic perturbation analysis for scalable certified robustness and beyond},
-  author={Xu, Kaidi and Shi, Zhouxing and Zhang, Huan and Wang, Yihan and Chang, Kai-Wei and Huang, Minlie and Kailkhura, Bhavya and Lin, Xue and Hsieh, Cho-Jui},
-  journal={Advances in Neural Information Processing Systems},
-  volume={33},
-  year={2020}
-}
+---
 
-@article{salman2019convex,
-  title={A Convex Relaxation Barrier to Tight Robustness Verification of Neural Networks},
-  author={Salman, Hadi and Yang, Greg and Zhang, Huan and Hsieh, Cho-Jui and Zhang, Pengchuan},
-  journal={Advances in Neural Information Processing Systems},
-  volume={32},
-  pages={9835--9846},
-  year={2019}
-}
+### 核心配置文件
 
-@inproceedings{xu2021fast,
-    title={{Fast and Complete}: Enabling Complete Neural Network Verification with Rapid and Massively Parallel Incomplete Verifiers},
-    author={Kaidi Xu and Huan Zhang and Shiqi Wang and Yihan Wang and Suman Jana and Xue Lin and Cho-Jui Hsieh},
-    booktitle={International Conference on Learning Representations},
-    year={2021},
-    url={https://openreview.net/forum?id=nVZtXBI6LNn}
-}
+所有实验配置位于 `complete_verifier/exp_configs/`：
 
-@article{wang2021beta,
+- **M2 基线对比**:
+  - `mnist_baseline.yaml` - baseline 策略
+  - `mnist_baseline_auto.yaml` - auto 策略
+  - `mnist_baseline_kfsb.yaml` - kfsb 策略
+
+- **M3 消融实验**:
+  - `mnist_m3_baseline.yaml`
+  - `mnist_m3_auto.yaml`
+  - `mnist_m3_kfsb.yaml`
+  - `mnist_m3_kfsb_reduceop_max.yaml`
+  - `mnist_m3_kfsb_candidates5.yaml` ⭐ **最优配置**
+
+- **M4 epsilon 网格**:
+  - `mnist_m4_baseline_eps0.01.yaml` ~ `mnist_m4_baseline_eps0.05.yaml`
+  - `mnist_m4_auto_eps0.01.yaml` ~ `mnist_m4_auto_eps0.05.yaml`
+  - `mnist_m4_kfsb_eps0.01.yaml` ~ `mnist_m4_kfsb_eps0.05.yaml`
+
+---
+
+### 关键改进点
+
+#### 1. 分支策略优化（kfsb + candidates=5）
+
+**改进内容**：
+- 采用 kfsb（k-Fsb）分支策略替代 baseline 的 babsr 策略
+- 将候选分支数量从默认 3 增加到 5
+
+**效果**：
+- 验证准确率：91.0% → **93.0%** (+2.0%)
+- 超时样本数：9 → **7** (-22.2%)
+- 平均验证时间：4.06s → **3.24s** (-20.2%)
+
+**原理**：
+- kfsb 策略通过更智能的分支选择，优先探索最有可能完成验证的子问题
+- 增加候选数量允许算法在更大的搜索空间中选择最优分支点
+- 以适度增加节点访问数量（72224 vs 13014）换取更高的验证成功率
+
+#### 2. Epsilon 网格系统性评估
+
+在 ε=0.01–0.05 范围内系统性评估了三种策略的稳定性：
+- **低扰动区（ε=0.01）**：所有策略均达到 100% 验证率
+- **中扰动区（ε=0.02–0.03）**：kfsb 优势显著，验证率高 1–6%
+- **高扰动区（ε=0.05）**：所有策略进入 timeout 主导区，kfsb 仍保持最低平均时间
+
+---
+
+### 实验结果可视化
+
+所有图表位于 `项目书/results/*/figures/`：
+
+**M3 消融实验**：
+- `m3_verified_acc.png` - 验证准确率对比
+- `m3_timeout.png` - 超时样本数对比
+- `m3_mean_time.png` - 平均验证时间对比
+
+**M4 epsilon 网��**：
+- `m4_vra_epsilon.png` - 验证准确率 vs ε
+- `m4_timeout_epsilon.png` - 超时数 vs ε
+- `m4_mean_time_epsilon.png` - 平均时间 vs ε
+
+---
+
+### 论文与报告
+
+- **论文初稿**：`项目书/软件学报风格论文初稿.md`
+  - 格式：软件学报论文格式
+  - 内容：引言、相关工作、方法、实验结果、讨论、结论
+  - 参考文献：10 篇（Reluplex, CROWN, beta-CROWN, etc.）
+
+- **实验报告**：
+  - `项目书/results/阶段实验结果总汇_2026-04-03.md` - 完整实验数据
+  - `项目书/results/结果汇总报告_2026-04-04.md` - 结果分析与结论
+  - `项目书/results/开题预期成效对照清单_2026-04-04.md` - 验收清单
+
+---
+
+### 常见问题
+
+**Q1: 为什么只测试了 MNIST，没有 CIFAR-10？**
+
+A: 本项目聚焦于全连接网络（FCNN）的验证策略优化。MNIST 的 FCNN 模型已足够展示策略差异；CIFAR-10 通常使用 CNN 架构，不在本项目范围内。
+
+**Q2: eps=0.05 的结果为什么与其他 epsilon 不同？**
+
+A: eps=0.05 采用"稳态标准"（分块执行 + 降低资源压力），与 eps=0.01–0.03 的"同预算标准"不可直接横向比较。该结果主要用于趋势判断，不用于精确性能比较。
+
+**Q3: 如何复现论文中的所有实验？**
+
+A: 按顺序执行：
+```bash
+cd 项目书/scripts
+bash run_m2_strategy_compare.sh  # 约 30 分钟
+bash run_m3_branching_ablation.sh  # 约 40 分钟
+bash run_m4_epsilon_grid.sh  # 约 2 小时（含 eps=0.05 分块执行）
+```
+
+**Q4: 如何修改实验参数？**
+
+A: 编辑 `complete_verifier/exp_configs/` 下的 YAML 配置文件，主要参数：
+- `data.start` / `data.end` - 样本范围
+- `specification.epsilon` - 扰动半径
+- `bab.branching.method` - 分支策略（babsr / fsb / kfsb）
+- `bab.branching.candidates` - 候选分支数量
+- `bab.timeout` - 单样本超时时间（秒）
+
+---
+
+### 引用
+
+如果本项目对您的研究有帮助，请引用：
+
+```bibtex
+@misc{relu-fcnn-verification-2026,
+  title={基于 alpha-beta-CROWN 的 ReLU 全连接网络鲁棒性验证实验研究},
+  author={zbhzbhzbh11 et al.},
+  year={2026},
+  howpublished={\url{https://github.com/YOUR_USERNAME/alpha-beta-CROWN}}
+}
+```
+
+以及 α,β-CROWN 原始论文：
+
+```bibtex
+@inproceedings{wang2021betacrown,
   title={{Beta-CROWN}: Efficient bound propagation with per-neuron split constraints for complete and incomplete neural network verification},
   author={Wang, Shiqi and Zhang, Huan and Xu, Kaidi and Lin, Xue and Jana, Suman and Hsieh, Cho-Jui and Kolter, J Zico},
-  journal={Advances in Neural Information Processing Systems},
-  volume={34},
+  booktitle={Advances in Neural Information Processing Systems},
   year={2021}
-}
-
-@InProceedings{zhang22babattack,
-  title = 	 {A Branch and Bound Framework for Stronger Adversarial Attacks of {R}e{LU} Networks},
-  author =       {Zhang, Huan and Wang, Shiqi and Xu, Kaidi and Wang, Yihan and Jana, Suman and Hsieh, Cho-Jui and Kolter, Zico},
-  booktitle = 	 {Proceedings of the 39th International Conference on Machine Learning},
-  volume = 	 {162},
-  pages = 	 {26591--26604},
-  year = 	 {2022},
-}
-
-@article{zhang2022general,
-  title={General Cutting Planes for Bound-Propagation-Based Neural Network Verification},
-  author={Zhang, Huan and Wang, Shiqi and Xu, Kaidi and Li, Linyi and Li, Bo and Jana, Suman and Hsieh, Cho-Jui and Kolter, J Zico},
-  journal={Advances in Neural Information Processing Systems},
-  year={2022}
-}
-
-@inproceedings{kotha2023provably,
- author = {Kotha, Suhas and Brix, Christopher and Kolter, J. Zico and Dvijotham, Krishnamurthy and Zhang, Huan},
- booktitle = {Advances in Neural Information Processing Systems},
- editor = {A. Oh and T. Neumann and A. Globerson and K. Saenko and M. Hardt and S. Levine},
- pages = {80270--80290},
- publisher = {Curran Associates, Inc.},
- title = {Provably Bounding Neural Network Preimages},
- url = {https://proceedings.neurips.cc/paper_files/paper/2023/file/fe061ec0ae03c5cf5b5323a2b9121bfd-Paper-Conference.pdf},
- volume = {36},
- year = {2023}
-}
-
-@inproceedings{zhou2024scalable,
-  title={Scalable Neural Network Verification with Branch-and-bound Inferred Cutting Planes},
-  author={Zhou, Duo and Brix, Christopher and Hanasusanto, Grani A and Zhang, Huan},
-  booktitle={The Thirty-eighth Annual Conference on Neural Information Processing Systems},
-  year={2024}
-}
-
-@inproceedings{shi2024genbab,
-  title={Neural Network Verification with Branch-and-Bound for General Nonlinearities},
-  author={Shi, Zhouxing and Jin, Qirui and Kolter, Zico and Jana, Suman and Hsieh, Cho-Jui and Zhang, Huan},
-  booktitle={International Conference on Tools and Algorithms for the Construction and Analysis of Systems},
-  year={2025}
-}
-
-@inproceedings{zhou2025clip,
-  title={Clip-and-Verify: Linear Constraint-Driven Domain Clipping for Accelerating Neural Network Verification},
-  author={Zhou, Duo and Chavez, Jorge and Chen, Hesun and Hanasusanto, Grani A and Zhang, Huan},
-  booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems},
-  year={2025}
 }
 ```
 
-Developers and Copyright
-----------------------
+---
 
-Team leaders:
-* Faculty: Huan Zhang (huan@huan-zhang.com), UIUC
-* Student: Xiangru Zhong (xiangru4@illinois.edu), UIUC
+### 许可证
 
-Current developers (* indicates members of VNN-COMP 2025 team):
-* \*Duo Zhou (duozhou2@illinois.edu), UIUC
-* \*Keyi Shen (keyis2@illinois.edu), UIUC (graduated, now at Georgia Tech)
-* \*Hesun Chen (hesunc2@illinois.edu), UIUC
-* \*Haoyu Li (haoyuli5@illinois.edu), UIUC
-* \*Ruize Gao (ruizeg2@illinois.edu), UIUC
-* \*Hao Cheng (haoc539@illinois.edu), UIUC
-* Zhouxing Shi (zhouxingshichn@gmail.com), UCLA/UC Riverside
-* Lei Huang (leih5@illinois.edu), UIUC
-* Taobo Liao (taobol2@illinois.edu), UIUC
-* Jorge Chavez (jorgejc2@illinois.edu), UIUC
+本项目基于 α,β-CROWN 开源工具，遵循其原始许可证。实验代码和配置文件采用 MIT License。
 
-Past developers:
-* Hongji Xu (hx84@duke.edu), Duke University (intern with Prof. Huan Zhang)
-* Christopher Brix (brix@cs.rwth-aachen.de), RWTH Aachen University
-* Hao Chen (haoc8@illinois.edu), UIUC
-* Keyu Lu (keyulu2@illinois.edu), UIUC
-* Kaidi Xu (kx46@drexel.edu), Drexel University
-* Sanil Chawla (schawla7@illinois.edu), UIUC
-* Linyi Li (linyi2@illinois.edu), UIUC
-* Zhuolin Yang (zhuolin5@illinois.edu), UIUC
-* Zhuowen Yuan (realzhuowen@gmail.com), UIUC
-* Qirui Jin (qiruijin@umich.edu), University of Michigan
-* Shiqi Wang (sw3215@columbia.edu), Columbia University
-* Yihan Wang (yihanwang@ucla.edu), UCLA
-* Jinqi (Kathryn) Chen (jinqic@cs.cmu.edu), CMU
+---
 
-α,β-CROWN is currently supported in part by the National Science Foundation (NSF; award 2331967, 2525287), the AI2050 program at Schmidt Science, the Virtual Institute for Scientific Software (VISS) at Georgia Tech, the University Research Program at Toyota Research Institute (TRI), and a Mathworks research award.
+### 联系方式
 
-The team acknowledges the financial and advisory support (2021 - 2023) from Prof. Zico Kolter (zkolter@cs.cmu.edu), Prof. Cho-Jui Hsieh (chohsieh@cs.ucla.edu), Prof. Suman Jana (suman@cs.columbia.edu), Prof. Bo Li (lbo@illinois.edu), and Prof. Xue Lin (xue.lin@northeastern.edu) during the years 2021 - 2023.
+- **项目维护者**: zbhzbhzbh11
+- **上游工具**: [α,β-CROWN GitHub](https://github.com/Verified-Intelligence/alpha-beta-CROWN)
+- **问题反馈**: 请在 GitHub Issues 中提交
 
-Our library is released under the BSD 3-Clause license. A copy of the license is included [here](LICENSE).
+---
 
+## English Version
+
+### Project Overview
+
+This project conducts robustness verification experiments on ReLU-activated fully-connected neural networks (FCNNs) using the **α,β-CROWN** tool. By comparing different verification strategies (baseline, auto, kfsb) on the MNIST dataset, we systematically evaluate the impact of branching strategy optimization on verification efficiency and validate strategy stability across multiple perturbation radii (ε=0.01–0.05).
+
+**Key Achievements**:
+- ✅ Completed M1–M4 milestones
+- ✅ Proposed improved configuration `kfsb + candidates=5`, achieving **93.0% verified accuracy** at ε=0.02 (baseline: 91.0%)
+- ✅ Reduced timeout samples from 9 to **7**, average verification time from 4.06s to **3.24s**
+- ✅ Complete evidence chain: config files, logs, CSV summaries, visualization charts
+
+---
+
+### Quick Start
+
+#### Requirements
+- **OS**: Linux (WSL2 / Ubuntu 20.04+)
+- **GPU**: NVIDIA GPU with CUDA 11.8+ (tested on RTX 4060 Laptop)
+- **Python**: 3.10+
+- **Dependencies**: PyTorch 2.4.1+, auto_LiRPA
+
+#### Installation
+
+1. **Clone the repository** (including auto_LiRPA submodule)
+```bash
+git clone --recursive https://github.com/YOUR_USERNAME/alpha-beta-CROWN.git
+cd alpha-beta-CROWN
+```
+
+2. **Create Conda environment**
+```bash
+conda create -n abcrown python=3.10
+conda activate abcrown
+```
+
+3. **Install dependencies**
+```bash
+# Install PyTorch (CUDA 11.8)
+pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu118
+
+# Install auto_LiRPA
+cd auto_LiRPA
+pip install -e .
+cd ..
+
+# Install other dependencies
+pip install -r complete_verifier/requirements.txt
+```
+
+4. **Verify installation**
+```bash
+cd complete_verifier
+python abcrown.py --config exp_configs/mnist_crown_general.yaml
+```
+
+---
+
+### Experiment Reproduction
+
+#### Data Preparation
+Model files are included in the repository:
+- `saved_models/mnist_fcnn.onnx` - MNIST FCNN (ONNX format)
+- `saved_models/mnist_fcnn.pth` - PyTorch weights
+
+#### M2: Baseline Strategy Comparison (ε=0.02, n=0–100)
+
+```bash
+cd 项目书/scripts
+bash run_m2_strategy_compare.sh
+```
+
+**Expected Output**:
+- Log files: `项目书/实验日志/2026-03-14_mnist_*_0_100.log`
+- CSV summary: `项目书/results/m2/m2_strategy_compare_0_100.csv`
+- Visualization: `项目书/results/m2/figures/*.png`
+
+**Results Preview**:
+| Strategy | Verified Acc | Timeout | Mean Time(s) |
+|----------|-------------|---------|--------------|
+| baseline | 91.0% | 9 | 3.82 |
+| auto | 91.0% | 9 | 5.77 |
+| kfsb | **92.0%** | **8** | **3.17** |
+
+#### M3: Branching Strategy Ablation (Main Line A)
+
+```bash
+cd 项目书/scripts
+bash run_m3_branching_ablation.sh
+```
+
+**Expected Output**:
+- Log files: `项目书/results/m3/logs/*.log`
+- CSV summary: `项目书/results/m3/m3_branching_ablation.csv`
+- Node statistics: `项目书/results/m3/m3_nodes_summary.csv`
+- Visualization: `项目书/results/m3/figures/*.png`
+
+**Results Preview**:
+| Configuration | Verified Acc | Timeout | Mean Time(s) |
+|---------------|-------------|---------|--------------|
+| baseline | 91.0% | 9 | 4.06 |
+| auto | 91.0% | 9 | 6.14 |
+| kfsb | 92.0% | 8 | 3.60 |
+| kfsb_reduceop_max | 92.0% | 8 | 3.44 |
+| **kfsb_candidates5** | **93.0%** | **7** | **3.24** |
+
+#### M4: Epsilon Grid Sweep (Auxiliary Line B)
+
+```bash
+cd 项目书/scripts
+bash run_m4_epsilon_grid.sh
+```
+
+**Expected Output**:
+- Log files: `项目书/results/m4/logs/*.log`
+- CSV summary: `项目书/results/m4/m4_epsilon_grid.csv`
+- Visualization: `项目书/results/m4/figures/*.png`
+
+**Results Preview** (kfsb strategy):
+| ε | Verified Acc | Timeout | Mean Time(s) |
+|---|-------------|---------|--------------|
+| 0.01 | 100.0% | 0 | 0.31 |
+| 0.02 | 92.0% | 8 | 3.27 |
+| 0.03 | 68.0% | 32 | 6.66 |
+| 0.05 | 11.0% | 89 | 11.38 |
+
+---
+
+### Key Improvements
+
+#### 1. Branching Strategy Optimization (kfsb + candidates=5)
+
+**Improvement**:
+- Adopted kfsb (k-Fsb) branching strategy instead of baseline's babsr
+- Increased candidate branch count from default 3 to 5
+
+**Effect**:
+- Verified accuracy: 91.0% → **93.0%** (+2.0%)
+- Timeout samples: 9 → **7** (-22.2%)
+- Mean verification time: 4.06s → **3.24s** (-20.2%)
+
+**Principle**:
+- kfsb strategy prioritizes exploring subproblems most likely to complete verification through smarter branch selection
+- Increasing candidate count allows the algorithm to choose optimal branching points from a larger search space
+- Trades moderate increase in node visits (72224 vs 13014) for higher verification success rate
+
+#### 2. Systematic Epsilon Grid Evaluation
+
+Systematically evaluated stability of three strategies across ε=0.01–0.05:
+- **Low perturbation (ε=0.01)**: All strategies achieve 100% verification rate
+- **Medium perturbation (ε=0.02–0.03)**: kfsb shows significant advantage, 1–6% higher verification rate
+- **High perturbation (ε=0.05)**: All strategies enter timeout-dominated region, kfsb maintains lowest mean time
+
+---
+
+### Citation
+
+If this project helps your research, please cite:
+
+```bibtex
+@misc{relu-fcnn-verification-2026,
+  title={Robustness Verification of ReLU FCNNs with alpha-beta-CROWN: An Experimental Study},
+  author={zbhzbhzbh11 et al.},
+  year={2026},
+  howpublished={\url{https://github.com/YOUR_USERNAME/alpha-beta-CROWN}}
+}
+```
+
+And the original α,β-CROWN paper:
+
+```bibtex
+@inproceedings{wang2021betacrown,
+  title={{Beta-CROWN}: Efficient bound propagation with per-neuron split constraints for complete and incomplete neural network verification},
+  author={Wang, Shiqi and Zhang, Huan and Xu, Kaidi and Lin, Xue and Jana, Suman and Hsieh, Cho-Jui and Kolter, J Zico},
+  booktitle={Advances in Neural Information Processing Systems},
+  year={2021}
+}
+```
+
+---
+
+### License
+
+This project is based on the α,β-CROWN open-source tool and follows its original license. Experiment code and configuration files are licensed under MIT License.
+
+---
+
+### Contact
+
+- **Maintainer**: zbhzbhzbh11
+- **Upstream Tool**: [α,β-CROWN GitHub](https://github.com/Verified-Intelligence/alpha-beta-CROWN)
+- **Issue Reporting**: Please submit via GitHub Issues
+
+---
+
+**Note**: Replace `YOUR_USERNAME` with your actual GitHub username before pushing to GitHub.
