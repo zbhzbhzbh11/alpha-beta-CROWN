@@ -1,0 +1,9 @@
+epsilon,method,total,safe_incomplete,unsafe_by_incomplete,unknown,verified_acc,mean_time,max_time,timeout,has_bab
+0.01,crown,100,98,0,2,98.0,0.2037,1.0687,2,NO
+0.02,crown,100,82,0,18,82.0,0.2123,1.2335,18,NO
+0.03,crown,100,41,0,59,41.0,0.2628,1.2086,59,NO
+0.05,crown,100,4,0,96,4.0,0.2331,1.2016,96,NO
+0.01,alphacrown,100,98,0,2,98.0,0.262,4.692,2,NO
+0.02,alphacrown,100,83,0,17,83.0,0.7178,4.4863,17,NO
+0.03,alphacrown,100,46,0,54,46.0,1.5801,3.4349,54,NO
+0.05,alphacrown,100,5,0,95,5.0,2.7843,3.9342,95,NO

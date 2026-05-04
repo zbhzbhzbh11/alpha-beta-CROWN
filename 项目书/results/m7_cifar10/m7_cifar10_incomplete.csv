@@ -1,0 +1,5 @@
+epsilon,epsilon_val,method,total,safe_incomplete,unknown,verified_acc,mean_time,max_time,timeout,has_bab
+1/255,0.00392,crown,20,3,17,15.0,0.1747,2.0798,17,NO
+2/255,0.00784,crown,20,0,20,0.0,0.1357,1.2676,20,NO
+1/255,0.00392,alphacrown,20,5,15,25.0,3.083,7.2314,15,NO
+2/255,0.00784,alphacrown,20,0,20,0.0,4.0097,7.5384,20,NO

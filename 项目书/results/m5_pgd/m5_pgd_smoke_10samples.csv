@@ -1,0 +1,5 @@
+epsilon,strategy,config,total_samples,pgd_unsafe_count,bab_safe_count,bab_unsafe_count,bab_unknown_count,final_verified_acc,mean_time,timeout_count,log_path
+0.01,baseline,mnist_m5pgd_baseline_eps0.01.yaml,10,0,10,0,0,100.0,1.0834,0,项目书/results/m5_pgd/logs/baseline_eps0.01.log
+0.02,baseline,mnist_m5pgd_baseline_eps0.02.yaml,10,0,10,0,0,100.0,1.0896,0,项目书/results/m5_pgd/logs/baseline_eps0.02.log
+0.01,kfsb,mnist_m5pgd_kfsb_eps0.01.yaml,10,0,10,0,0,100.0,0.913,0,项目书/results/m5_pgd/logs/kfsb_eps0.01.log
+0.02,kfsb,mnist_m5pgd_kfsb_eps0.02.yaml,10,0,10,0,0,100.0,1.2896,0,项目书/results/m5_pgd/logs/kfsb_eps0.02.log

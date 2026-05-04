@@ -1,0 +1,28 @@
+model:
+  name: cifar_marabou_small
+  path: models/marabou_cifar10/cifar_marabou_small.pth
+data:
+  dataset: CIFAR
+  std: 1.0
+  mean: 0.0
+  start: 0
+  end: 20
+specification:
+  norm: .inf
+  epsilon: 0.00784313725  # 2/255
+attack:
+  pgd_steps: 50
+  pgd_restarts: 10
+  pgd_order: before
+solver:
+  batch_size: 2048
+  alpha-crown:
+    iteration: 50
+  beta-crown:
+    iteration: 20
+bab:
+  timeout: 60
+  branching:
+    method: kfsb
+    candidates: 5
+    reduceop: min

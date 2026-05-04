@@ -1,0 +1,24 @@
+general:
+  complete_verifier: skip
+model:
+  name: cifar_marabou_small
+  path: models/marabou_cifar10/cifar_marabou_small.pth
+data:
+  dataset: CIFAR
+  std: 1.0
+  mean: 0.0
+  start: 0
+  end: 20
+specification:
+  norm: .inf
+  epsilon: 0.00392156863  # 1/255
+attack:
+  pgd_order: skip
+solver:
+  batch_size: 1024
+  bound_prop_method: alpha-crown
+  alpha-crown:
+    iteration: 100
+    lr_alpha: 0.1
+bab:
+  timeout: 120

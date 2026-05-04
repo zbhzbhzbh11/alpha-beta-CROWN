@@ -1,0 +1,3 @@
+run_id,config,verified_acc,safe,unsafe,timeout,mean_time_s,max_time_s,log_path
+cifar10_baseline,mnist_cifar10_baseline.yaml,0.0,0,16,4,15.44,86.93,项目书/results/m5/logs/cifar10_baseline.log
+cifar10_kfsb_candidates5,mnist_cifar10_kfsb.yaml,0.0,0,16,4,13.41,68.04,项目书/results/m5/logs/cifar10_kfsb_candidates5.log
