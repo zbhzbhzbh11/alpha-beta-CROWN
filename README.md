@@ -1,4 +1,4 @@
-# ReLU 全连接神经网络鲁棒性验证实验项目
+# 神经网络鲁棒性验证策略对比实验
 
 [English](#english-version) | [中文](#中文版本)
 
@@ -8,13 +8,24 @@
 
 ### 项目概述
 
-本项目基于 **α,β-CROWN** 工具，针对 ReLU 激活函数的全连接神经网络（FCNN）进行鲁棒性验证实验研究。通过对比不同验证策略（baseline、auto、kfsb）在 MNIST 数据集上的表现，系统性评估了分支策略优化对验证效率的影响，并在多个扰动半径（ε=0.01–0.05）下验证了策略的稳定性。
+本项目基于 **α,β-CROWN**（VNN-COMP 多届冠军验证器），对 ReLU 神经网络进行系统性的验证策略对比实验。覆盖 MNIST（FCNN）和 CIFAR-10（ConvNet）两个数据集，形成从"极快但弱"到"较慢但强"的完整验证能力光谱。
+
+**全部实验里程碑（M2–M7）**：
+
+| 里程碑 | 内容 | 状态 |
+|---|---|---|
+| M2 | 基线策略对比（baseline/auto/kfsb） | ✅ |
+| M3 | 分支策略消融（主线 A）— kfsb_candidates5 最优 | ✅ |
+| M4 | ε 网格扫描（辅线 B）— 3策略×4ε | ✅ |
+| M5 | PGD 攻击评估 — pgd_order=before 预筛选 | ✅ |
+| M6 | CROWN/α-CROWN 不完整验证独立对比 | ✅ |
+| M7 | CIFAR-10 最小验证（跨数据集迁移） | ✅ |
 
 **核心成果**：
-- ✅ 完成 M1–M4 四个里程碑实验
-- ✅ 提出改进配置 `kfsb + candidates=5`，在 ε=0.02 下达到 **93.0% 验证准确率**（baseline 91.0%）
-- ✅ 超时样本数从 9 降至 **7**，平均验证时间从 4.06s 降至 **3.24s**
-- ✅ 完整的证据链：配置文件、日志、CSV 汇总、可视化图表
+- 提出改进配置 `kfsb + candidates=5`，ε=0.02 下 VRA **93.0%**（baseline 91.0%），timeout -2，mean_time -0.81s
+- PGD 预筛选在 ε=0.05 下将 timeout 从 89 降至 31（**-65.2%**）
+- 完整验证链：CROWN(0.2s) → α-CROWN(1s) → BaB(6s) → PGD+BaB(4s)
+- MNIST→CIFAR-10 跨数据集对比：Conv 网络的边界传播松弛远严重于 FCNN
 
 ---
 
@@ -30,7 +41,7 @@
 
 1. **克隆仓库**（包含 auto_LiRPA 子模块）
 ```bash
-git clone --recursive https://github.com/YOUR_USERNAME/alpha-beta-CROWN.git
+git clone --recursive https://github.com/zbhzbhzbh11/alpha-beta-CROWN.git
 cd alpha-beta-CROWN
 ```
 
@@ -42,22 +53,15 @@ conda activate abcrown
 
 3. **安装依赖**
 ```bash
-# 安装 PyTorch (CUDA 11.8)
 pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu118
-
-# 安装 auto_LiRPA
-cd auto_LiRPA
-pip install -e .
-cd ..
-
-# 安装其他依赖
+cd auto_LiRPA && pip install -e . && cd ..
 pip install -r complete_verifier/requirements.txt
 ```
 
 4. **验证安装**
 ```bash
 cd complete_verifier
-python abcrown.py --config exp_configs/mnist_crown_general.yaml
+python abcrown.py --config exp_configs/course/m3/mnist_m3_kfsb_candidates5.yaml --start 0 --end 1
 ```
 
 ---
@@ -65,70 +69,134 @@ python abcrown.py --config exp_configs/mnist_crown_general.yaml
 ### 实验复现
 
 #### 数据准备
+
 模型文件已包含在仓库中：
-- `saved_models/mnist_fcnn.onnx` - MNIST 全连接网络（ONNX 格式）
-- `saved_models/mnist_fcnn.pth` - PyTorch 权重文件
+- `saved_models/mnist_fcnn.onnx` — MNIST FCNN（784→256→128→10, ReLU）
+- `saved_models/mnist_fcnn.pth` — PyTorch 权重
+- `complete_verifier/models/marabou_cifar10/cifar_marabou_small.pth` — CIFAR-10 ConvNet
 
 #### M2: 基线策略对比（ε=0.02, n=0–100）
 
 ```bash
-cd 项目书/scripts
-bash run_m2_strategy_compare.sh
+cd 项目书/scripts && bash run_m2_strategy_compare.sh
 ```
 
-**预期输出**：
-- 日志文件：`项目书/实验日志/2026-03-14_mnist_*_0_100.log`
-- CSV 汇总：`项目书/results/m2/m2_strategy_compare_0_100.csv`
-- 可视化图表：`项目书/results/m2/figures/*.png`
+| 策略 | VRA | Timeout | Mean Time |
+|------|:---:|:---:|:---:|
+| baseline | 91.0% | 9 | 3.82s |
+| auto | 91.0% | 9 | 5.77s |
+| **kfsb** | **92.0%** | **8** | **3.17s** |
 
-**结果预览**：
-| 策略 | 验证准确率 | 超时数 | 平均时间(s) |
-|------|-----------|--------|------------|
-| baseline | 91.0% | 9 | 3.82 |
-| auto | 91.0% | 9 | 5.77 |
-| kfsb | **92.0%** | **8** | **3.17** |
+#### M3: 分支策略消融 — 主线 A
 
-#### M3: 分支策略消融实验（主线A）
+```bash
+cd 项目书/scripts && bash run_m3_branching_ablation.sh
+```
+
+| 配置 | VRA | Timeout | Mean Time |
+|------|:---:|:---:|:---:|
+| baseline | 91.0% | 9 | 4.06s |
+| auto | 91.0% | 9 | 6.14s |
+| kfsb | 92.0% | 8 | 3.60s |
+| kfsb_reduceop_max | 92.0% | 8 | 3.44s |
+| **kfsb_candidates5** | **93.0%** | **7** | **3.24s** |
+
+#### M4: ε 网格扫描 — 辅线 B
+
+```bash
+cd 项目书/scripts && bash run_m4_epsilon_grid.sh
+```
+
+**kfsb 策略结果**：
+
+| ε | VRA | Timeout | Mean Time |
+|---:|:---:|:---:|:---:|
+| 0.01 | 100.0% | 0 | 0.31s |
+| 0.02 | 92.0% | 8 | 3.27s |
+| 0.03 | 68.0% | 32 | 6.66s |
+| 0.05 | 11.0% | 89 | 11.38s |
+
+#### M5: PGD 攻击预筛评估
+
+```bash
+cd 项目书/scripts && bash run_m5_pgd_compare.sh
+python 项目书/scripts/summarize_m5_pgd_results.py
+```
+
+**kfsb + pgd_order=before 结果**：
+
+| ε | VRA | PGD Unsafe | Timeout | Mean Time |
+|---:|:---:|:---:|:---:|:---:|
+| 0.01 | 100.0% | 0 | 0 | 1.80s |
+| 0.02 | 92.0% | 5 | **3** | 2.83s |
+| 0.03 | 62.0% | 17 | **21** | 4.59s |
+| 0.05 | 11.0% | **58** | **31** | 4.44s |
+
+> ε=0.03 公平对照（timeout=30s）：VRA=73.0%, timeout=10。详见 `项目书/results/m5_pgd_control/`。
+
+#### M6: CROWN / α-CROWN 不完整验证
 
 ```bash
 cd 项目书/scripts
-bash run_m3_branching_ablation.sh
+# 运行脚本：直接执行位于 complete_verifier/ 的 abcrown.py
+# 配置目录: complete_verifier/exp_configs/course/m6_incomplete/
+```
+```bash
+# 例：CROWN ε=0.02, 100样本
+cd complete_verifier
+python abcrown.py --config exp_configs/course/m6_incomplete/mnist_m6_crown_eps0.02.yaml
 ```
 
-**预期输出**：
-- 日志文件：`项目书/results/m3/logs/*.log`
-- CSV 汇总：`项目书/results/m3/m3_branching_ablation.csv`
-- 节点统计：`项目书/results/m3/m3_nodes_summary.csv`
-- 可视化图表：`项目书/results/m3/figures/*.png`
+| ε | CROWN VRA | α-CROWN VRA | CROWN t | α-CROWN t |
+|---:|:---:|:---:|:---:|:---:|
+| 0.01 | 98.0% | 98.0% | 0.20s | 0.26s |
+| 0.02 | 82.0% | 83.0% | 0.21s | 0.72s |
+| 0.03 | 41.0% | 46.0% | 0.26s | 1.58s |
+| 0.05 | 4.0% | 5.0% | 0.23s | 2.78s |
 
-**结果预览**：
-| 配置 | 验证准确率 | 超时数 | 平均时间(s) |
-|------|-----------|--------|------------|
-| baseline | 91.0% | 9 | 4.06 |
-| auto | 91.0% | 9 | 6.14 |
-| kfsb | 92.0% | 8 | 3.60 |
-| kfsb_reduceop_max | 92.0% | 8 | 3.44 |
-| **kfsb_candidates5** | **93.0%** | **7** | **3.24** |
-
-#### M4: Epsilon 网格扫描（辅线B）
+#### M7: CIFAR-10 最小验证
 
 ```bash
-cd 项目书/scripts
-bash run_m4_epsilon_grid.sh
+cd complete_verifier
+# CROWN ε=1/255, 20样本
+python abcrown.py --config exp_configs/course/m7_cifar10/cifar10_m7_crown_eps1_255.yaml
 ```
 
-**预期输出**：
-- 日志文件：`项目书/results/m4/logs/*.log`
-- CSV 汇总：`项目书/results/m4/m4_epsilon_grid.csv`
-- 可视化图表：`项目书/results/m4/figures/*.png`
+| ε | CROWN VRA | α-CROWN VRA | CROWN t | α-CROWN t |
+|---:|:---:|:---:|:---:|:---:|
+| 1/255 | 15.0% | 25.0% | 0.17s | 3.08s |
+| 2/255 | 0.0% | 0.0% | 0.14s | 4.01s |
 
-**结果预览**（kfsb 策略）：
-| ε | 验证准确率 | 超时数 | 平均时间(s) |
-|---|-----------|--------|------------|
-| 0.01 | 100.0% | 0 | 0.31 |
-| 0.02 | 92.0% | 8 | 3.27 |
-| 0.03 | 68.0% | 32 | 6.66 |
-| 0.05 | 11.0% | 89 | 11.38 |
+对比 MNIST（ε≈2.5/255 CROWN VRA=98%）→ CIFAR-10 Conv 网络验证难度显著更高。
+
+---
+
+### 验证策略总对比
+
+**完整对比表**: `项目书/results/verification_strategy_overall_comparison.md`
+
+| 方法 | 类型 | 证明 safe？ | 发现 unsafe？ | 速度 | 本项目 |
+|---|---|---|---|---|---|
+| PGD | 经验攻击 | ❌ | ✅ | 极快 | M5 |
+| CROWN | 不完整验证 | ✅(不完备) | ❌ | ~0.2s | M6 |
+| α-CROWN | 不完整验证(更紧) | ✅(不完备) | ❌ | ~1s | M6 |
+| β-CROWN+BaB | 完整验证 | ✅(完备) | ✅(BaB中) | ~6s | M4 |
+| PGD+BaB | 攻击预筛+完整验证 | ✅(完备) | ✅(PGD预筛) | ~4s | M5 |
+
+**验证能力光谱**: CROWN(0.2s) → α-CROWN(1s) → BaB(6s) → PGD+BaB(4s)
+
+---
+
+### 核心改进：kfsb_candidates5
+
+| 指标 | baseline (babsr) | kfsb_candidates5 | 改善 |
+|---|---|---|---|
+| VRA | 91.0% | **93.0%** | **+2.0%** |
+| Timeout | 9 | **7** | **-2** |
+| Mean Time | 4.06s | **3.24s** | **-0.81s** |
+| Max Time | 56.27s | **35.90s** | **-20.37s** |
+
+M4 证实该优势在 ε=0.01~0.03 区间持续成立。M5 证实该配置与 PGD 预筛选兼容。
 
 ---
 
@@ -137,192 +205,109 @@ bash run_m4_epsilon_grid.sh
 ```
 alpha-beta-CROWN/
 ├── saved_models/
-│   ├── mnist_fcnn.onnx          # MNIST 全连接模型
-│   └── mnist_fcnn.pth
+│   ├── mnist_fcnn.onnx / mnist_fcnn.pth
+├── complete_verifier/
+│   ├── abcrown.py                  # 主验证入口
+│   ├── exp_configs/course/
+│   │   ├── m3/                     # M3 消融配置 (5)
+│   │   ├── m4/                     # M4 ε网格配置 (12)
+│   │   ├── m5_pgd/                 # M5 PGD配置 (8)
+│   │   ├── m6_incomplete/          # M6 不完整验证配置 (8)
+│   │   └── m7_cifar10/             # M7 CIFAR-10配置 (4)
+│   └── models/marabou_cifar10/     # CIFAR-10 预训练权重
 ├── 项目书/
-│   ├── scripts/                  # 实验脚本
-│   │   ├── run_m2_strategy_compare.sh
-│   │   ├── run_m3_branching_ablation.sh
-│   │   ├── run_m4_epsilon_grid.sh
-│   │   ├── summarize_m2_results.py
-│   │   ├── summarize_m3_results.py
-│   │   ├── summarize_m4_results.py
-│   │   ├── plot_m2_results.py
-│   │   ├── plot_m3_results.py
-│   │   └── plot_m4_results.py
-│   ├── results/                  # 实验结果
-│   │   ├── m2/                   # M2 基线对比
-│   │   │   ├── m2_strategy_compare_0_100.csv
-│   │   │   └── figures/
-│   │   ├── m3/                   # M3 消融实验
-│   │   │   ├── m3_branching_ablation.csv
-│   │   │   ├── m3_nodes_summary.csv
-│   │   │   ├── logs/
-│   │   │   └── figures/
-│   │   ├── m4/                   # M4 epsilon 网格
-│   │   │   ├── m4_epsilon_grid.csv
-│   │   │   ├── logs/
-│   │   │   └── figures/
-│   │   ├── 阶段实验结果总汇_2026-04-03.md
-│   │   ├── 结果汇总报告_2026-04-04.md
-│   │   └── 开题预期成效对照清单_2026-04-04.md
-│   ├── 软件学报风格论文初稿.md      # 论文初稿
-│   ├── 开题报告.md
-│   └── 作业题纲.md
-├── complete_verifier/            # α,β-CROWN 核心代码
-└── auto_LiRPA/                   # 子模块：线性界传播库
+│   ├── scripts/                    # 运行 & 汇总脚本
+│   │   ├── run_m{2,3,4}*.sh
+│   │   ├── run_m5_pgd_compare.sh
+│   │   ├── run_m5_cifar10.sh
+│   │   ├── summarize_m{2,3,4,5}*.py
+│   │   └── summarize_m5_pgd_results.py
+│   ├── results/
+│   │   ├── m2/ m3/ m4/             # M2-M4 结果
+│   │   ├── m5_pgd/                 # M5 PGD 结果+报告
+│   │   ├── m5_pgd_control/         # M5 公平对照
+│   │   ├── m6_incomplete/          # M6 结果+报告
+│   │   ├── m7_cifar10/             # M7 结果+报告
+│   │   ├── verification_strategy_overall_comparison.md
+│   │   └── M2_M3_M4_最终结论表_2026-05-04.md
+│   ├── 项目全景梳理文档.md          # 完整项目全景
+│   └── 开题报告.md
+└── auto_LiRPA/                     # 子模块
 ```
-
----
-
-### 核心配置文件
-
-所有实验配置位于 `complete_verifier/exp_configs/`：
-
-- **M2 基线对比**:
-  - `mnist_baseline.yaml` - baseline 策略
-  - `mnist_baseline_auto.yaml` - auto 策略
-  - `mnist_baseline_kfsb.yaml` - kfsb 策略
-
-- **M3 消融实验**:
-  - `mnist_m3_baseline.yaml`
-  - `mnist_m3_auto.yaml`
-  - `mnist_m3_kfsb.yaml`
-  - `mnist_m3_kfsb_reduceop_max.yaml`
-  - `mnist_m3_kfsb_candidates5.yaml` ⭐ **最优配置**
-
-- **M4 epsilon 网格**:
-  - `mnist_m4_baseline_eps0.01.yaml` ~ `mnist_m4_baseline_eps0.05.yaml`
-  - `mnist_m4_auto_eps0.01.yaml` ~ `mnist_m4_auto_eps0.05.yaml`
-  - `mnist_m4_kfsb_eps0.01.yaml` ~ `mnist_m4_kfsb_eps0.05.yaml`
-
----
-
-### 关键改进点
-
-#### 1. 分支策略优化（kfsb + candidates=5）
-
-**改进内容**：
-- 采用 kfsb（k-Fsb）分支策略替代 baseline 的 babsr 策略
-- 将候选分支数量从默认 3 增加到 5
-
-**效果**：
-- 验证准确率：91.0% → **93.0%** (+2.0%)
-- 超时样本数：9 → **7** (-22.2%)
-- 平均验证时间：4.06s → **3.24s** (-20.2%)
-
-**原理**：
-- kfsb 策略通过更智能的分支选择，优先探索最有可能完成验证的子问题
-- 增加候选数量允许算法在更大的搜索空间中选择最优分支点
-- 以适度增加节点访问数量（72224 vs 13014）换取更高的验证成功率
-
-#### 2. Epsilon 网格系统性评估
-
-在 ε=0.01–0.05 范围内系统性评估了三种策略的稳定性：
-- **低扰动区（ε=0.01）**：所有策略均达到 100% 验证率
-- **中扰动区（ε=0.02–0.03）**：kfsb 优势显著，验证率高 1–6%
-- **高扰动区（ε=0.05）**：所有策略进入 timeout 主导区，kfsb 仍保持最低平均时间
-
----
-
-### 实验结果可视化
-
-所有图表位于 `项目书/results/*/figures/`：
-
-**M3 消融实验**：
-- `m3_verified_acc.png` - 验证准确率对比
-- `m3_timeout.png` - 超时样本数对比
-- `m3_mean_time.png` - 平均验证时间对比
-
-**M4 epsilon 网��**：
-- `m4_vra_epsilon.png` - 验证准确率 vs ε
-- `m4_timeout_epsilon.png` - 超时数 vs ε
-- `m4_mean_time_epsilon.png` - 平均时间 vs ε
 
 ---
 
 ### 论文与报告
 
-- **论文初稿**：`项目书/软件学报风格论文初稿.md`
-  - 格式：软件学报论文格式
-  - 内容：引言、相关工作、方法、实验结果、讨论、结论
-  - 参考文献：10 篇（Reluplex, CROWN, beta-CROWN, etc.）
-
-- **实验报告**：
-  - `项目书/results/阶段实验结果总汇_2026-04-03.md` - 完整实验数据
-  - `项目书/results/结果汇总报告_2026-04-04.md` - 结果分析与结论
-  - `项目书/results/开题预期成效对照清单_2026-04-04.md` - 验收清单
+| 文档 | 路径 |
+|---|---|
+| 项目全景梳理（含答辩速讲） | `项目书/项目全景梳理文档.md` |
+| M2/M3/M4 最终结论表 | `项目书/results/M2_M3_M4_最终结论表_2026-05-04.md` |
+| 验证策略总对比表 | `项目书/results/verification_strategy_overall_comparison.md` |
+| M5 PGD 报告 | `项目书/results/m5_pgd/M5_PGD攻击评估结果报告.md` |
+| M6 不完整验证报告 | `项目书/results/m6_incomplete/M6_不完整验证结果报告.md` |
+| M7 CIFAR-10 报告 | `项目书/results/m7_cifar10/M7_CIFAR10不完整验证结果报告.md` |
 
 ---
 
 ### 常见问题
 
-**Q1: 为什么只测试了 MNIST，没有 CIFAR-10？**
+**Q1: M5 和 M4 的 timeout 预算是否一致？**
 
-A: 本项目聚焦于全连接网络（FCNN）的验证策略优化。MNIST 的 FCNN 模型已足够展示策略差异；CIFAR-10 通常使用 CNN 架构，不在本项目范围内。
+ε=0.01/0.02 一致（30s），可直接对比。ε=0.03 M5 补跑了 M5-control（timeout=30s 公平对照），结论以对照为准。ε=0.05 两版均降压/分片，对比主要用于工程趋势分析。详见 `verification_strategy_overall_comparison.md` §4。
 
-**Q2: eps=0.05 的结果为什么与其他 epsilon 不同？**
+**Q2: CIFAR-10 验证为什么比 MNIST 难得多？**
 
-A: eps=0.05 采用"稳态标准"（分块执行 + 降低资源压力），与 eps=0.01–0.03 的"同预算标准"不可直接横向比较。该结果主要用于趋势判断，不用于精确性能比较。
+在相近 ε 下，MNIST CROWN VRA=98%，CIFAR-10 CROWN VRA=0%。差距来自输入维度(784→3072)、RGB 三通道、Conv 结构松弛累积和自然图像数据复杂度等多因素共同作用，不应归因于单一原因。
 
-**Q3: 如何复现论文中的所有实验？**
+**Q3: M6 为什么不产生 unsafe？**
 
-A: 按顺序执行：
+CROWN/α-CROWN 是边界传播方法，计算输出下界，不主动搜索反例。只能判定 safe-incomplete 或 unknown。发现 unsafe 需要 PGD 攻击（M5）或 BaB 分支过程中发现反例。
+
+**Q4: 如何复现全部实验？**
+
 ```bash
 cd 项目书/scripts
-bash run_m2_strategy_compare.sh  # 约 30 分钟
-bash run_m3_branching_ablation.sh  # 约 40 分钟
-bash run_m4_epsilon_grid.sh  # 约 2 小时（含 eps=0.05 分块执行）
+bash run_m2_strategy_compare.sh    # ~30 min
+bash run_m3_branching_ablation.sh  # ~40 min
+bash run_m4_epsilon_grid.sh        # ~2 hours
+bash run_m5_pgd_compare.sh         # ~30 min
+# M6/M7 直接运行 abcrown.py，见上方对应章节
 ```
 
-**Q4: 如何修改实验参数？**
+**Q5: 如何修改实验参数？**
 
-A: 编辑 `complete_verifier/exp_configs/` 下的 YAML 配置文件，主要参数：
-- `data.start` / `data.end` - 样本范围
-- `specification.epsilon` - 扰动半径
-- `bab.branching.method` - 分支策略（babsr / fsb / kfsb）
-- `bab.branching.candidates` - 候选分支数量
-- `bab.timeout` - 单样本超时时间（秒）
+编辑 `complete_verifier/exp_configs/course/` 下的 YAML 配置文件：
+- `data.start` / `data.end` — 样本范围
+- `specification.epsilon` — 扰动半径
+- `bab.branching.method` — 分支策略（babsr/kfsb）
+- `bab.branching.candidates` — 候选分支数
+- `bab.timeout` — 单样本超时（秒）
+- `general.complete_verifier` — `bab`（完整）/ `skip`（不完整验证）
 
 ---
 
-### 引用
+### 许可证与引用
 
-如果本项目对您的研究有帮助，请引用：
+本项目基于 α,β-CROWN 开源工具。实验代码和配置文件采用 MIT License。
 
 ```bibtex
-@misc{relu-fcnn-verification-2026,
-  title={基于 alpha-beta-CROWN 的 ReLU 全连接网络鲁棒性验证实验研究},
-  author={zbhzbhzbh11 et al.},
+@misc{nn-verification-strategy-comparison-2026,
+  title={神经网络鲁棒性验证策略对比实验},
+  author={zbhzbhzbh11},
   year={2026},
-  howpublished={\url{https://github.com/YOUR_USERNAME/alpha-beta-CROWN}}
+  howpublished={\url{https://github.com/zbhzbhzbh11/alpha-beta-CROWN}}
 }
-```
 
-以及 α,β-CROWN 原始论文：
-
-```bibtex
 @inproceedings{wang2021betacrown,
-  title={{Beta-CROWN}: Efficient bound propagation with per-neuron split constraints for complete and incomplete neural network verification},
-  author={Wang, Shiqi and Zhang, Huan and Xu, Kaidi and Lin, Xue and Jana, Suman and Hsieh, Cho-Jui and Kolter, J Zico},
+  title={{Beta-CROWN}: Efficient bound propagation with per-neuron split
+         constraints for complete and incomplete neural network verification},
+  author={Wang, Shiqi and Zhang, Huan and Xu, Kaidi and Lin, Xue and
+          Jana, Suman and Hsieh, Cho-Jui and Kolter, J Zico},
   booktitle={Advances in Neural Information Processing Systems},
   year={2021}
 }
 ```
-
----
-
-### 许可证
-
-本项目基于 α,β-CROWN 开源工具，遵循其原始许可证。实验代码和配置文件采用 MIT License。
-
----
-
-### 联系方式
-
-- **项目维护者**: zbhzbhzbh11
-- **上游工具**: [α,β-CROWN GitHub](https://github.com/Verified-Intelligence/alpha-beta-CROWN)
-- **问题反馈**: 请在 GitHub Issues 中提交
 
 ---
 
@@ -330,195 +315,65 @@ A: 编辑 `complete_verifier/exp_configs/` 下的 YAML 配置文件，主要参�
 
 ### Project Overview
 
-This project conducts robustness verification experiments on ReLU-activated fully-connected neural networks (FCNNs) using the **α,β-CROWN** tool. By comparing different verification strategies (baseline, auto, kfsb) on the MNIST dataset, we systematically evaluate the impact of branching strategy optimization on verification efficiency and validate strategy stability across multiple perturbation radii (ε=0.01–0.05).
+Systematic verification strategy comparison on ReLU neural networks using **α,β-CROWN**, covering MNIST (FCNN) and CIFAR-10 (ConvNet). Forms a complete verification capability spectrum from "fast but weak" to "slow but strong."
 
-**Key Achievements**:
-- ✅ Completed M1–M4 milestones
-- ✅ Proposed improved configuration `kfsb + candidates=5`, achieving **93.0% verified accuracy** at ε=0.02 (baseline: 91.0%)
-- ✅ Reduced timeout samples from 9 to **7**, average verification time from 4.06s to **3.24s**
-- ✅ Complete evidence chain: config files, logs, CSV summaries, visualization charts
+**All Milestones (M2–M7)**: ✅ Complete
 
----
+| Milestone | Content |
+|---|---|
+| M2 | Baseline strategy comparison (baseline/auto/kfsb) |
+| M3 | Branching ablation (Main Line A) — kfsb_candidates5 optimal |
+| M4 | ε-grid sweep (Auxiliary Line B) — 3 strategies × 4ε |
+| M5 | PGD attack evaluation — pgd_order=before pre-filtering |
+| M6 | CROWN/α-CROWN incomplete verification |
+| M7 | CIFAR-10 minimum verification (cross-dataset) |
+
+**Key Results**:
+- `kfsb + candidates=5`: VRA **93.0%** (baseline 91.0%), timeout -2, mean_time -0.81s
+- PGD pre-filtering: timeout reduced by **65.2%** at ε=0.05
+- Full spectrum: CROWN(0.2s) → α-CROWN(1s) → BaB(6s) → PGD+BaB(4s)
+- MNIST→CIFAR-10: ConvNet boundary relaxation far more severe than FCNN
 
 ### Quick Start
 
-#### Requirements
-- **OS**: Linux (WSL2 / Ubuntu 20.04+)
-- **GPU**: NVIDIA GPU with CUDA 11.8+ (tested on RTX 4060 Laptop)
-- **Python**: 3.10+
-- **Dependencies**: PyTorch 2.4.1+, auto_LiRPA
+See Chinese version above for full installation and reproduction instructions.
 
-#### Installation
+### Experiment Results Summary
 
-1. **Clone the repository** (including auto_LiRPA submodule)
-```bash
-git clone --recursive https://github.com/YOUR_USERNAME/alpha-beta-CROWN.git
-cd alpha-beta-CROWN
-```
+**MNIST FCNN (kfsb, ε=0.02)**:
 
-2. **Create Conda environment**
-```bash
-conda create -n abcrown python=3.10
-conda activate abcrown
-```
+| Method | VRA | Timeout | Mean Time |
+|---|---|---|---|
+| CROWN (M6) | 82.0% | 18 | 0.21s |
+| α-CROWN (M6) | 83.0% | 17 | 0.72s |
+| BaB (M4) | 92.0% | 8 | 3.27s |
+| PGD+BaB (M5) | 92.0% | **3** | 2.83s |
+| **kfsb_c5 (M3)** | **93.0%** | **7** | **3.24s** |
 
-3. **Install dependencies**
-```bash
-# Install PyTorch (CUDA 11.8)
-pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu118
+**CIFAR-10 ConvNet (ε=2/255, 20 samples)**:
 
-# Install auto_LiRPA
-cd auto_LiRPA
-pip install -e .
-cd ..
+| Method | VRA | PGD Unsafe |
+|---|---|---|
+| CROWN (M7) | 0.0% | — |
+| α-CROWN (M7) | 0.0% | — |
+| PGD+BaB (M5) | 0.0% | 16/20 |
 
-# Install other dependencies
-pip install -r complete_verifier/requirements.txt
-```
+### Key Documents
 
-4. **Verify installation**
-```bash
-cd complete_verifier
-python abcrown.py --config exp_configs/mnist_crown_general.yaml
-```
+| Document | Path |
+|---|---|
+| Full project overview | `项目书/项目全景梳理文档.md` |
+| Strategy comparison table | `项目书/results/verification_strategy_overall_comparison.md` |
+| M5 PGD report | `项目书/results/m5_pgd/M5_PGD攻击评估结果报告.md` |
+| M6 incomplete verif. | `项目书/results/m6_incomplete/M6_不完整验证结果报告.md` |
+| M7 CIFAR-10 report | `项目书/results/m7_cifar10/M7_CIFAR10不完整验证结果报告.md` |
 
----
+### License & Citation
 
-### Experiment Reproduction
-
-#### Data Preparation
-Model files are included in the repository:
-- `saved_models/mnist_fcnn.onnx` - MNIST FCNN (ONNX format)
-- `saved_models/mnist_fcnn.pth` - PyTorch weights
-
-#### M2: Baseline Strategy Comparison (ε=0.02, n=0–100)
-
-```bash
-cd 项目书/scripts
-bash run_m2_strategy_compare.sh
-```
-
-**Expected Output**:
-- Log files: `项目书/实验日志/2026-03-14_mnist_*_0_100.log`
-- CSV summary: `项目书/results/m2/m2_strategy_compare_0_100.csv`
-- Visualization: `项目书/results/m2/figures/*.png`
-
-**Results Preview**:
-| Strategy | Verified Acc | Timeout | Mean Time(s) |
-|----------|-------------|---------|--------------|
-| baseline | 91.0% | 9 | 3.82 |
-| auto | 91.0% | 9 | 5.77 |
-| kfsb | **92.0%** | **8** | **3.17** |
-
-#### M3: Branching Strategy Ablation (Main Line A)
-
-```bash
-cd 项目书/scripts
-bash run_m3_branching_ablation.sh
-```
-
-**Expected Output**:
-- Log files: `项目书/results/m3/logs/*.log`
-- CSV summary: `项目书/results/m3/m3_branching_ablation.csv`
-- Node statistics: `项目书/results/m3/m3_nodes_summary.csv`
-- Visualization: `项目书/results/m3/figures/*.png`
-
-**Results Preview**:
-| Configuration | Verified Acc | Timeout | Mean Time(s) |
-|---------------|-------------|---------|--------------|
-| baseline | 91.0% | 9 | 4.06 |
-| auto | 91.0% | 9 | 6.14 |
-| kfsb | 92.0% | 8 | 3.60 |
-| kfsb_reduceop_max | 92.0% | 8 | 3.44 |
-| **kfsb_candidates5** | **93.0%** | **7** | **3.24** |
-
-#### M4: Epsilon Grid Sweep (Auxiliary Line B)
-
-```bash
-cd 项目书/scripts
-bash run_m4_epsilon_grid.sh
-```
-
-**Expected Output**:
-- Log files: `项目书/results/m4/logs/*.log`
-- CSV summary: `项目书/results/m4/m4_epsilon_grid.csv`
-- Visualization: `项目书/results/m4/figures/*.png`
-
-**Results Preview** (kfsb strategy):
-| ε | Verified Acc | Timeout | Mean Time(s) |
-|---|-------------|---------|--------------|
-| 0.01 | 100.0% | 0 | 0.31 |
-| 0.02 | 92.0% | 8 | 3.27 |
-| 0.03 | 68.0% | 32 | 6.66 |
-| 0.05 | 11.0% | 89 | 11.38 |
-
----
-
-### Key Improvements
-
-#### 1. Branching Strategy Optimization (kfsb + candidates=5)
-
-**Improvement**:
-- Adopted kfsb (k-Fsb) branching strategy instead of baseline's babsr
-- Increased candidate branch count from default 3 to 5
-
-**Effect**:
-- Verified accuracy: 91.0% → **93.0%** (+2.0%)
-- Timeout samples: 9 → **7** (-22.2%)
-- Mean verification time: 4.06s → **3.24s** (-20.2%)
-
-**Principle**:
-- kfsb strategy prioritizes exploring subproblems most likely to complete verification through smarter branch selection
-- Increasing candidate count allows the algorithm to choose optimal branching points from a larger search space
-- Trades moderate increase in node visits (72224 vs 13014) for higher verification success rate
-
-#### 2. Systematic Epsilon Grid Evaluation
-
-Systematically evaluated stability of three strategies across ε=0.01–0.05:
-- **Low perturbation (ε=0.01)**: All strategies achieve 100% verification rate
-- **Medium perturbation (ε=0.02–0.03)**: kfsb shows significant advantage, 1–6% higher verification rate
-- **High perturbation (ε=0.05)**: All strategies enter timeout-dominated region, kfsb maintains lowest mean time
-
----
-
-### Citation
-
-If this project helps your research, please cite:
-
-```bibtex
-@misc{relu-fcnn-verification-2026,
-  title={Robustness Verification of ReLU FCNNs with alpha-beta-CROWN: An Experimental Study},
-  author={zbhzbhzbh11 et al.},
-  year={2026},
-  howpublished={\url{https://github.com/YOUR_USERNAME/alpha-beta-CROWN}}
-}
-```
-
-And the original α,β-CROWN paper:
-
-```bibtex
-@inproceedings{wang2021betacrown,
-  title={{Beta-CROWN}: Efficient bound propagation with per-neuron split constraints for complete and incomplete neural network verification},
-  author={Wang, Shiqi and Zhang, Huan and Xu, Kaidi and Lin, Xue and Jana, Suman and Hsieh, Cho-Jui and Kolter, J Zico},
-  booktitle={Advances in Neural Information Processing Systems},
-  year={2021}
-}
-```
-
----
-
-### License
-
-This project is based on the α,β-CROWN open-source tool and follows its original license. Experiment code and configuration files are licensed under MIT License.
-
----
+MIT License. See Chinese version above for BibTeX citations.
 
 ### Contact
 
 - **Maintainer**: zbhzbhzbh11
-- **Upstream Tool**: [α,β-CROWN GitHub](https://github.com/Verified-Intelligence/alpha-beta-CROWN)
-- **Issue Reporting**: Please submit via GitHub Issues
-
----
-
-**Note**: Replace `YOUR_USERNAME` with your actual GitHub username before pushing to GitHub.
+- **Upstream**: [α,β-CROWN](https://github.com/Verified-Intelligence/alpha-beta-CROWN)
+- **Issues**: GitHub Issues
