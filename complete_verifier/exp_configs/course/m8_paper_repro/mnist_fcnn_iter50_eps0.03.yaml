@@ -1,0 +1,32 @@
+# Ablation: beta-crown.iteration=50 (course default) vs 20 (paper)
+# All other parameters identical to paper config
+general:
+  complete_verifier: bab
+model:
+  onnx_path: ../saved_models/mnist_fcnn.onnx
+data:
+  dataset: MNIST
+  start: 0
+  end: 5
+specification:
+  norm: .inf
+  epsilon: 0.03
+attack:
+  pgd_order: skip
+solver:
+  batch_size: 4096
+  alpha-crown:
+    iteration: 20
+    lr_alpha: 0.1
+    lr_decay: 0.98
+  beta-crown:
+    iteration: 50
+    lr_alpha: 0.01
+    lr_beta: 0.03
+    lr_decay: 0.98
+bab:
+  timeout: 120
+  branching:
+    method: kfsb
+    candidates: 5
+    reduceop: max

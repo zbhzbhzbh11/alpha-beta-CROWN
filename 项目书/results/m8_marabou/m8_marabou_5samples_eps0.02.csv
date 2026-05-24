@@ -1,0 +1,6 @@
+sample_idx,true_label,pred_label,epsilon,marabou_status,marabou_time_s,abcrown_status,abcrown_time_s,result_consistent
+0,7,7,0.02,safe,3.491,safe,0.375,True
+1,2,2,0.02,safe,2.818,safe,0.298,True
+2,1,1,0.02,safe,3.856,unknown,0.409,
+3,0,0,0.02,safe,3.737,safe,0.458,True
+4,4,4,0.02,safe,3.768,safe,0.437,True

@@ -1,0 +1,27 @@
+# M8: Single-sample comparison with Marabou
+# Sample 0, epsilon 0.01, BaB verification with best config (kfsb)
+general:
+  complete_verifier: bab
+model:
+  onnx_path: ../saved_models/mnist_fcnn.onnx
+data:
+  dataset: MNIST
+  start: 0
+  end: 1
+specification:
+  norm: .inf
+  epsilon: 0.01
+attack:
+  pgd_order: before
+solver:
+  batch_size: 1024
+  alpha-crown:
+    lr_alpha: 0.05
+    lr_decay: 0.5
+    iteration: 20
+bab:
+  timeout: 60
+  branching:
+    method: kfsb
+    candidates: 5
+    reduceop: min

@@ -1,0 +1,63 @@
+{
+  "tool": "Marabou",
+  "sample_idx": 0,
+  "epsilon": 0.01,
+  "timeout_per_target": 30,
+  "true_label": 7,
+  "pred_label": 7,
+  "logits": [
+    -2.683342456817627,
+    -3.913710832595825,
+    2.2810096740722656,
+    1.187238335609436,
+    -7.341274261474609,
+    -3.220620632171631,
+    -16.386335372924805,
+    11.635936737060547,
+    -2.3127248287200928,
+    -1.836217999458313
+  ],
+  "overall_result": "safe",
+  "overall_explanation": "No counterexample exists for any target label",
+  "total_time_s": 4.269,
+  "targets_tested": 9,
+  "target_results": {
+    "2": {
+      "verdict": "UNSAT",
+      "time_s": 1.05
+    },
+    "3": {
+      "verdict": "UNSAT",
+      "time_s": 0.457
+    },
+    "9": {
+      "verdict": "UNSAT",
+      "time_s": 0.379
+    },
+    "8": {
+      "verdict": "UNSAT",
+      "time_s": 0.362
+    },
+    "0": {
+      "verdict": "UNSAT",
+      "time_s": 0.409
+    },
+    "5": {
+      "verdict": "UNSAT",
+      "time_s": 0.806
+    },
+    "1": {
+      "verdict": "UNSAT",
+      "time_s": 0.383
+    },
+    "4": {
+      "verdict": "UNSAT",
+      "time_s": 0.217
+    },
+    "6": {
+      "verdict": "UNSAT",
+      "time_s": 0.206
+    }
+  },
+  "timestamp": "2026-05-07 19:19:18"
+}
