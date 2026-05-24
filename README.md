@@ -10,7 +10,7 @@
 
 本项目基于 **α,β-CROWN**（VNN-COMP 多届冠军验证器），对 ReLU 神经网络进行系统性的验证策略对比实验。覆盖 MNIST（FCNN）和 CIFAR-10（ConvNet）两个数据集，形成从"极快但弱"到"较慢但强"的完整验证能力光谱。
 
-**全部实验里程碑（M2–M7）**：
+**全部实验里程碑（M2–M8）**：
 
 | 里程碑 | 内容 | 状态 |
 |---|---|---|
@@ -20,6 +20,7 @@
 | M5 | PGD 攻击评估 — pgd_order=before 预筛选 | ✅ |
 | M6 | CROWN/α-CROWN 不完整验证独立对比 | ✅ |
 | M7 | CIFAR-10 最小验证（跨数据集迁移） | ✅ |
+| M8 | Marabou 跨工具对比 + 论文复现（ICLR'21, VNN-COMP'21） | ✅ |
 
 **核心成果**：
 - 提出改进配置 `kfsb + candidates=5`，ε=0.02 下 VRA **93.0%**（baseline 91.0%），timeout -2，mean_time -0.81s
@@ -169,6 +170,39 @@ python abcrown.py --config exp_configs/course/m7_cifar10/cifar10_m7_crown_eps1_2
 
 对比 MNIST（ε≈2.5/255 CROWN VRA=98%）→ CIFAR-10 Conv 网络验证难度显著更高。
 
+#### M8: Marabou 跨工具对比 + 论文复现
+
+**跨工具对照（5 样本 × 3 ε）**
+
+```bash
+cd 项目书/scripts
+python m8_abcrown_verify_one.py          # α,β-CROWN 单样本验证
+python m8_marabou_verify_mnist_one.py    # Marabou 单样本验证
+python m8_marabou_verify_mnist_batch.py  # Marabou 批量验证（输出 CSV）
+```
+
+| ε | 一致率 | Marabou avg time | α,β-CROWN avg time |
+|---:|:---:|:---:|:---:|
+| 0.01 | 5/5 ✅ | 4.46s | 0.50s |
+| 0.02 | 4/5 ⚠️ | 3.53s | 0.40s |
+| 0.03 | 4/5 ⚠️ | 45.73s | 0.41s |
+
+**论文实验对标（α,β-CROWN ICLR'21 + VNN-COMP'21）**
+
+```bash
+cd complete_verifier
+# 论文配置（iter=20, lr_beta=0.03, batch=4096, kfsb_c5, timeout=120s）
+python abcrown.py --config exp_configs/course/m8_paper_repro/mnist_fcnn_paper_baB.yaml
+```
+
+| 论文结论 | 复现状态 |
+|---|---|
+| ① CROWN 速度 ~0.2s 且不随 ε 增长 | ✅ M6: 0.20–0.26s 恒定 |
+| ② α-CROWN 边界比 CROWN 更紧 | ✅ M6: VRA +1~5pp |
+| ③ BaB complete >> incomplete | ✅ Paper 配置 80% vs 46% (ε=0.03) |
+| ④ α,β-CROWN > Marabou（竞赛排名一致） | ✅ 4/5 vs 3/5, 0.66s vs 45.7s |
+| ⑤ CIFAR-10 >> MNIST 难度 | ✅ 98% → 0% VRA 断层 |
+
 ---
 
 ### 验证策略总对比
@@ -213,7 +247,9 @@ alpha-beta-CROWN/
 │   │   ├── m4/                     # M4 ε网格配置 (12)
 │   │   ├── m5_pgd/                 # M5 PGD配置 (8)
 │   │   ├── m6_incomplete/          # M6 不完整验证配置 (8)
-│   │   └── m7_cifar10/             # M7 CIFAR-10配置 (4)
+│   │   ├── m7_cifar10/             # M7 CIFAR-10配置 (4)
+│   │   ├── m8_marabou_compare.yaml # M8 Marabou 对比配置
+│   │   └── m8_paper_repro/         # M8 论文对标配置 (5)
 │   └── models/marabou_cifar10/     # CIFAR-10 预训练权重
 ├── 项目书/
 │   ├── scripts/                    # 运行 & 汇总脚本
@@ -221,13 +257,18 @@ alpha-beta-CROWN/
 │   │   ├── run_m5_pgd_compare.sh
 │   │   ├── run_m5_cifar10.sh
 │   │   ├── summarize_m{2,3,4,5}*.py
-│   │   └── summarize_m5_pgd_results.py
+│   │   ├── summarize_m5_pgd_results.py
+│   │   ├── m8_abcrown_verify_one.py
+│   │   ├── m8_marabou_verify_mnist_one.py
+│   │   ├── m8_marabou_verify_mnist_batch.py
 │   ├── results/
 │   │   ├── m2/ m3/ m4/             # M2-M4 结果
 │   │   ├── m5_pgd/                 # M5 PGD 结果+报告
 │   │   ├── m5_pgd_control/         # M5 公平对照
 │   │   ├── m6_incomplete/          # M6 结果+报告
 │   │   ├── m7_cifar10/             # M7 结果+报告
+│   │   ├── m8_marabou/             # M8 Marabou 结果+报告
+│   │   ├── Marabou_vs_alpha_beta_CROWN_方法学对比.md
 │   │   ├── verification_strategy_overall_comparison.md
 │   │   └── M2_M3_M4_最终结论表_2026-05-04.md
 │   ├── 项目全景梳理文档.md          # 完整项目全景
@@ -247,6 +288,11 @@ alpha-beta-CROWN/
 | M5 PGD 报告 | `项目书/results/m5_pgd/M5_PGD攻击评估结果报告.md` |
 | M6 不完整验证报告 | `项目书/results/m6_incomplete/M6_不完整验证结果报告.md` |
 | M7 CIFAR-10 报告 | `项目书/results/m7_cifar10/M7_CIFAR10不完整验证结果报告.md` |
+| M8 Marabou 对比报告 | `项目书/results/m8_marabou/M8_Marabou_5样本工具对比报告.md` |
+| M8 论文复现方案 | `项目书/论文实验对照与复现方案.md` |
+| 完成情况汇报 PPT | `项目书/results/完成情况汇报.pptx` |
+| 最终实验分析与结论 | `项目书/最终汇报_实验分析与结论.md` |
+| ADO 方法论 | `验证策略与改进方法分析报告.md` |
 
 ---
 
@@ -273,6 +319,7 @@ bash run_m3_branching_ablation.sh  # ~40 min
 bash run_m4_epsilon_grid.sh        # ~2 hours
 bash run_m5_pgd_compare.sh         # ~30 min
 # M6/M7 直接运行 abcrown.py，见上方对应章节
+# M8 Marabou 对比 → 项目书/scripts/m8_marabou_verify_mnist_batch.py
 ```
 
 **Q5: 如何修改实验参数？**
@@ -317,7 +364,7 @@ bash run_m5_pgd_compare.sh         # ~30 min
 
 Systematic verification strategy comparison on ReLU neural networks using **α,β-CROWN**, covering MNIST (FCNN) and CIFAR-10 (ConvNet). Forms a complete verification capability spectrum from "fast but weak" to "slow but strong."
 
-**All Milestones (M2–M7)**: ✅ Complete
+**All Milestones (M2–M8)**: ✅ Complete
 
 | Milestone | Content |
 |---|---|
@@ -327,6 +374,7 @@ Systematic verification strategy comparison on ReLU neural networks using **α,�
 | M5 | PGD attack evaluation — pgd_order=before pre-filtering |
 | M6 | CROWN/α-CROWN incomplete verification |
 | M7 | CIFAR-10 minimum verification (cross-dataset) |
+| M8 | Marabou cross-tool comparison + Paper reproduction (ICLR'21, VNN-COMP'21) |
 
 **Key Results**:
 - `kfsb + candidates=5`: VRA **93.0%** (baseline 91.0%), timeout -2, mean_time -0.81s
@@ -367,6 +415,9 @@ See Chinese version above for full installation and reproduction instructions.
 | M5 PGD report | `项目书/results/m5_pgd/M5_PGD攻击评估结果报告.md` |
 | M6 incomplete verif. | `项目书/results/m6_incomplete/M6_不完整验证结果报告.md` |
 | M7 CIFAR-10 report | `项目书/results/m7_cifar10/M7_CIFAR10不完整验证结果报告.md` |
+| M8 Marabou report | `项目书/results/m8_marabou/M8_Marabou_5样本工具对比报告.md` |
+| Final report (Chinese) | `项目书/最终汇报_实验分析与结论.md` |
+| Presentation PPT | `项目书/results/完成情况汇报.pptx` |
 
 ### License & Citation
 
