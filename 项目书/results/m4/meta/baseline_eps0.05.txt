@@ -1,0 +1,9 @@
+run_id=baseline_eps0.05
+config=/home/han/alpha-beta-CROWN/complete_verifier/exp_configs/course/m4/mnist_m4_baseline_eps0.05.yaml
+timestamp=2026-04-03 16:07:27
+hostname=LAPTOP-RGROMBPB
+python=Python 3.10.19
+gpu=NVIDIA GeForce RTX 4060 Laptop GPU
+threads: OMP=4, MKL=4, OPENBLAS=4
+wall_time_sec=1885.41
+max_rss_kb=5642920

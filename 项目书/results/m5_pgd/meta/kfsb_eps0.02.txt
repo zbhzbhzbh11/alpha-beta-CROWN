@@ -1,0 +1,4 @@
+run_id=kfsb_eps0.02
+config=exp_configs/course/m5_pgd/mnist_m5pgd_kfsb_eps0.02.yaml
+timestamp=2026-05-04 17:38:28
+wall_time_sec=287.64

@@ -1,0 +1,3 @@
+run_id=m6_crown_eps0.01
+timestamp=2026-05-04 19:37:01
+wall_time_sec=25.47

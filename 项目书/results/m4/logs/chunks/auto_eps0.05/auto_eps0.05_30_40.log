@@ -1,0 +1,2047 @@
+INFO     19:55:26     [tensor_storage.py:70] Hugepage enabled for branch-and-bound domains.
+Configurations:
+
+general:
+  device: cuda
+  seed: 100
+  conv_mode: patches
+  deterministic: false
+  double_fp: false
+  loss_reduction_func: sum
+  sparse_alpha: true
+  sparse_interm: true
+  save_adv_example: false
+  verify_onnxruntime_output: false
+  eval_adv_example: false
+  onnx_adv_example: false
+  show_adv_example: false
+  precompile_jit: false
+  reset_seed_after_precompile: false
+  prepare_only: false
+  complete_verifier: auto
+  enable_incomplete_verification: true
+  csv_name: null
+  results_file: out.txt
+  root_path: ''
+  deterministic_opt: false
+  graph_optimizer: 'Customized("custom_graph_optimizer", "default_optimizer")'
+  buffer_has_batchdim: false
+  save_output: false
+  output_file: out.pkl
+  return_optimized_model: false
+  store_all_specs_on_cpu: false
+  adhoc_tuning: null
+model:
+  name: null
+  path: null
+  onnx_path: ../saved_models/mnist_fcnn.onnx
+  onnx_path_prefix: ''
+  cache_onnx_conversion: false
+  debug_onnx: false
+  onnx_quirks: null
+  input_shape: null
+  onnx_loader: default_onnx_and_vnnlib_loader
+  onnx_optimization_flags: []
+  onnx_vnnlib_joint_optimization_flags: none
+  check_optimized: false
+  flatten_final_output: false
+  optimize_graph: null
+  with_jacobian: false
+  bound_opts: null
+data:
+  start: 30
+  end: 40
+  select_instance: null
+  num_outputs: 10
+  mean: 0.0
+  std: 1.0
+  pkl_path: null
+  dataset: MNIST
+  data_filter_path: null
+  data_idx_file: null
+specification:
+  type: lp
+  robustness_type: verified-acc
+  norm: .inf
+  epsilon: 0.05
+  epsilon_min: 0.0
+  vnnlib_path: null
+  vnnlib_path_prefix: ''
+  shrink_eps: null
+  rhs_offset: null
+solver:
+  batch_size: 64
+  auto_enlarge_batch_size: false
+  batched_crown_auto_enlarge_max_vram_ratio: 0.9
+  min_batch_size_ratio: 0.1
+  use_float64_in_last_iteration: false
+  early_stop_patience: 10
+  start_save_best: 0.5
+  bound_prop_method: alpha-crown
+  init_bound_prop_method: same
+  prune_after_crown: true
+  optimize_disjuncts_separately: false
+  build_batch_size: 1000000
+  skip_with_refined_bound: true
+  forward_before_compute_bounds: false
+  crown:
+    batch_size: 1000000000
+    max_crown_size: 1000000000
+    activation_bound_option: adaptive
+    compare_crown_with_ibp: false
+  alpha-crown:
+    alpha: true
+    lr_alpha: 0.1
+    iteration: 100
+    share_alphas: false
+    lr_decay: 0.98
+    full_conv_alpha: true
+    max_coeff_mul: .inf
+    matmul_share_alphas: false
+    disable_optimization: []
+    max_time: 1.0
+    alpha_dtype: float16
+    input_split_alpha_iteration: 5
+    input_split_lr_alpha: 0.05
+  invprop:
+    apply_output_constraints_to: []
+    tighten_input_bounds: false
+    best_of_oc_and_no_oc: false
+    directly_optimize: []
+    oc_lr: 0.1
+    share_gammas: false
+  beta-crown:
+    lr_alpha: 0.01
+    lr_beta: 0.05
+    lr_decay: 0.98
+    optimizer: adam
+    iteration: 50
+    beta: true
+    beta_warmup: true
+    enable_opt_interm_bounds: false
+    all_node_split_LP: false
+  forward:
+    refine: false
+    max_dim: 10000
+    reset_threshold: 1.0
+  mip:
+    unstable_neuron_threshold: 0
+    parallel_solvers: 2
+    solver_threads: 1
+    refine_neuron_timeout: 5.0
+    refine_neuron_time_percentage: 0.8
+    early_stop: true
+    adv_warmup: true
+    mip_solver: gurobi
+    skip_unsafe: false
+    topk_filter: 1.0
+    sliding_window: -1
+    extra_constraint: false
+    refine_neuron_timeout_increasement: 0
+    timeout_neuron_percentage: 0.3
+    remaining_timeout_threshold: 1
+    remove_unstable_neurons: false
+    formulation: mip
+    output_cut: false
+bab:
+  max_domains: .inf
+  decision_thresh: 0
+  timeout: 12.0
+  timeout_scale: 1
+  max_iterations: -1
+  override_timeout: null
+  get_upper_bound: false
+  pruning_in_iteration: true
+  pruning_in_iteration_ratio: 0.2
+  sort_targets: false
+  batched_domain_list: true
+  optimized_interm: ''
+  interm_transfer: true
+  recompute_interm: false
+  sort_domain_interval: -1
+  vanilla_crown: false
+  tree_traversal: depth_first
+  hugetensor_allocator: true
+  cut:
+    enabled: false
+    cuts_path: null
+    bab_cut: false
+    lp_cut: false
+    lr: 0.01
+    lr_decay: 1.0
+    iteration: 100
+    bab_iteration: -1
+    early_stop_patience: -1
+    lr_beta: 0.02
+    number_cuts: 50
+    topk_cuts_in_filter: 1000
+    batch_size_primal: 100
+    max_num: 1000000000
+    patches_cut: false
+    cplex_cuts: false
+    cplex_cuts_wait: 0
+    cplex_cuts_revpickup: true
+    cut_reference_bounds: true
+    fix_intermediate_bounds: false
+    manual_cuts: null
+    biccos:
+      enabled: false
+      auto_param: true
+      constraint_strengthening: true
+      drop_ratio: 0.5
+      max_infer_iter: 20
+      max_domain: 10000.0
+      heuristic: neuron_influence_score
+      save_cuts: false
+      multi_tree_branching:
+        enabled: false
+        restore_best_tree: true
+        keep_n_best_domains: 50
+        target_batch_size: 200
+        iterations: 3
+  clip_n_verify:
+    rearrange_constraints: false
+    alpha_crown: false
+    prune: false
+    final_layer: false
+    clip_input_domain:
+      enabled: false
+      clip_type: relaxed
+      clip_neuron_selection_type: ratio
+      clip_neuron_selection_value: -1.0
+      clip_iterations: 1
+      clip_calculate_volume_metrics: false
+    clip_interm_domain:
+      enabled: false
+      with_input: false
+      clip_in_alpha_crown: false
+      topk_objective: 20
+  branching:
+    method: babsr
+    candidates: 3
+    reduceop: min
+    enable_intermediate_bound_opt: false
+    branching_input_and_activation: false
+    branching_input_and_activation_order: [input, relu]
+    branching_input_iterations: 30
+    branching_relu_iterations: 50
+    nonlinear_split:
+      method: bbps
+      disable: false
+      branching_point_method: uniform
+      num_branches: 2
+      filter: false
+      filter_beta: false
+      filter_clamp: false
+      filter_batch_size: 10000
+      filter_iterations: 25
+      relu_only: false
+      loose_tanh_threshold: null
+      branching_point:
+        db_path: branching_points.pt
+        num_iterations: 1000
+        batch_size: 1000000
+        range_l: -5.0
+        range_u: 5.0
+        log_interval: 100
+        step_size_1d: 0.01
+        step_size: 0.2
+    input_split:
+      split_hint: null
+      enable: false
+      reorder_bab: false
+      input_dim_threshold: 20
+      adv_check: 0
+      split_partitions: 2
+      sb_margin_weight: 1.0
+      sb_sum: false
+      sb_primary_spec: null
+      bf_backup_thresh: -1
+      bf_rhs_offset: 0
+      bf_iters: 1000000000.0
+      bf_batch_size: 100000
+      bf_zero_crossing_score: false
+      touch_zero_score: 0
+      ibp_enhancement: true
+      compare_with_old_bounds: true
+      update_rhs_with_attack: false
+      sb_coeff_thresh: 0.001
+      sort_index: null
+      sort_descending: true
+      show_progress: false
+      presplit_domains: null
+      skip_getting_worst_domain: false
+  attack:
+    enabled: false
+    beam_candidates: 8
+    beam_depth: 7
+    max_dive_fix_ratio: 0.8
+    min_local_free_ratio: 0.2
+    mip_start_iteration: 5
+    mip_timeout: 30.0
+    adv_pool_threshold: null
+    refined_mip_attacker: false
+    refined_batch_size: null
+attack:
+  general_attack: true
+  pgd_order: skip
+  pgd_steps: 100
+  pgd_restarts: 30
+  pgd_batch_size: 100000000
+  pgd_early_stop: true
+  pgd_lr_decay: 0.99
+  pgd_alpha: auto
+  pgd_alpha_scale: false
+  pgd_loss_mode: null
+  pgd_restart_when_stuck: false
+  enable_mip_attack: false
+  adv_saver: default_adv_saver
+  adv_verifier: default_adv_verifier
+  early_stop_condition: default_early_stop_condition
+  adv_example_finalizer: default_adv_example_finalizer
+  pgd_loss: default_pgd_loss
+  cex_path: ./test_cex.txt
+  attack_mode: PGD
+  attack_tolerance: 0.0
+  attack_func: attack_with_general_specs
+  gama_lambda: 10.0
+  gama_decay: 0.9
+  input_split:
+    pgd_steps: 100
+    pgd_restarts: 30
+    pgd_alpha: auto
+  input_split_check_adv:
+    enabled: auto
+    pgd_steps: 5
+    pgd_restarts: 5
+    pgd_alpha: auto
+    max_num_domains: 10
+debug:
+  view_model: false
+  lp_test: null
+  rescale_vnnlib_ptb: null
+  test_optimized_bounds: false
+  test_optimized_bounds_after_n_iterations: 0
+  print_verbose_decisions: false
+  biccos_mip_sanity_check: false
+  sanity_check: 0
+  z_split_enabled: false
+  save_minimal_config: null
+  save_minimal_config_omit_keys: []
+
+/home/han/miniconda3/envs/alpha-beta-crown/lib/python3.10/site-packages/onnx2pytorch/convert/layer.py:29: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at ../torch/csrc/utils/tensor_numpy.cpp:206.)
+  layer.weight.data = torch.from_numpy(numpy_helper.to_array(weight))
+/home/han/miniconda3/envs/alpha-beta-crown/lib/python3.10/site-packages/onnx2pytorch/convert/model.py:151: UserWarning: Using experimental implementation that allows 'batch_size > 1'.Batchnorm layers could potentially produce false outputs.
+  warnings.warn(
+Experiments at Fri Apr  3 19:55:26 2026 on LAPTOP-RGROMBPB
+Loading onnx ../saved_models/mnist_fcnn.onnx with quirks {}
+Finished onnx model loading in 0.0740 seconds
+ConvertModel(
+  (Flatten_/flatten/Flatten_output_0): Flatten()
+  (Gemm_/fc1/Gemm_output_0): Linear(in_features=784, out_features=256, bias=True)
+  (Relu_/relu1/Relu_output_0): ReLU()
+  (Gemm_/fc2/Gemm_output_0): Linear(in_features=256, out_features=128, bias=True)
+  (Relu_/relu2/Relu_output_0): ReLU()
+  (Gemm_output): Linear(in_features=128, out_features=10, bias=True)
+)
+Parameters:
+  Gemm_/fc1/Gemm_output_0.weight: shape torch.Size([256, 784])
+  Gemm_/fc1/Gemm_output_0.bias: shape torch.Size([256])
+  Gemm_/fc2/Gemm_output_0.weight: shape torch.Size([128, 256])
+  Gemm_/fc2/Gemm_output_0.bias: shape torch.Size([128])
+  Gemm_output.weight: shape torch.Size([10, 128])
+  Gemm_output.bias: shape torch.Size([10])
+Trying generic MNIST/CIFAR data loader.
+/home/han/alpha-beta-CROWN/complete_verifier/specifications.py:342: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:278.)
+  x_range_list = torch.Tensor(x_range_list).to(dtype=dtype, device=device).view(input_shape + [2])
+Internal results will be saved to out.txt.
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 0, vnnlib ID: 30 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.837923 seconds
+Disabling Clip-and-Verify because it does not support bab-refine!
+Model: BoundedModule(
+  (/0): BoundInput(name=/0, inputs=[], perturbed=True)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/11): BoundParams(name=/11, inputs=[], perturbed=False)
+  (/12): BoundParams(name=/12, inputs=[], perturbed=False)
+  (/13): BoundFlatten(name=/13, inputs=[/0], perturbed=True)
+  (/input): BoundLinear(name=/input, inputs=[/13, /7, /8], perturbed=True)
+  (/15): BoundRelu(name=/15, inputs=[/input], perturbed=True)
+  (/input-3): BoundLinear(name=/input-3, inputs=[/15, /9, /10], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+  (/18): BoundLinear(name=/18, inputs=[/17, /11, /12], perturbed=True)
+)
+Original output in the first batch: tensor([[ -6.87130260,  -4.78442621,  -2.42445850,  13.89417267, -10.14980602,
+           0.14393358, -16.74854279,  -2.47069621,  -2.55110216,  -0.49456671]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/15, inputs=[/input], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+build batch [1/1]
+layer /15 using sparse-features alpha with shape [133]; unstable size 133; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 77, 1, 133] with unstable size 76 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 133] with unstable size None total_size 9 output_shape 9
+layer /17 using sparse-features alpha with shape [76]; unstable size 76; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 76] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+initial CROWN bounds (first 10 items): [2.523434638977051, 1.3241662979125977, -0.8278274536132812, 4.038689613342285, -3.8221302032470703, 9.146478652954102, -3.0186643600463867, 2.3142833709716797, -2.963871955871582]
+prune_after_crown optimization in use
+  original spec size = torch.Size([1, 9])
+  pruned spec size = torch.Size([1, 4])
+Using alpha-CROWN to initialize bounds.
+best_l after optimization: -7.169968605041504
+alpha/beta optimization time: 3.649696111679077
+initial alpha-crown bounds (first 10 items): [0.24837207794189453, -3.205150604248047, -2.3041868209838867, -1.9090032577514648]
+Global lower bound: -3.205150604248047
+torch.Size([1, 4])
+6 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 1, 2, 3, 5, 7]
+Verified OR lbs (first 10 items): [[inf], [inf], [0.24837207794189453], [inf], [inf], [inf]]
+Unverified OR indices (first 10 items): [4, 6, 8]
+Unverified OR lbs (first 10 items): [[-3.205150604248047], [-2.3041868209838867], [-1.9090032577514648]]
+Start solving intermediate bounds with MIP...
+layer /15 using sparse-features alpha with shape [133]; unstable size 133; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 77, 1, 133] with unstable size 76 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 3, 1, 133] with unstable size None total_size 3 output_shape 3
+layer /17 using sparse-features alpha with shape [76]; unstable size 76; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 3, 1, 76] with unstable size None total_size 3 output_shape 3
+Optimizable variables initialized.
+Restricted license - for non-production use only - expires 2027-11-29
+INFO     19:55:34     [solver_module.py:123] Restricted license - for non-production use only - expires 2027-11-29
+mip_multi_proc: 2, mip_threads: 1,total threads used: 2, mip_perneuron_refine_timeout: 5.0
+[total time budget for MIP: 9.600000000000001]
+
+refine the bounds for layer  /15
+maximum relu layer improved by MIP so far 0
+refine the bounds for layer  /17
+current relu layer: /17, idx: 1
+timeout for this layer is 5.0
+Removed 0 unstable neurons in MIP based on the coefficient matrix.
+PGD done for relu layer 1
+Solving MIP for lay/input-3_71,[-4.008801460266113,1.9498004913330078]=>[-3.1943793057941083,0.8198225147944296] (2,-1; 2,-1), time: 5.5799s, #vars: 1437, #constrs: 783, improved: True
+Solving MIP for lay/input-3_15,[-2.255056619644165,2.8127689361572266]=>[-1.5293868314983283,1.5630093508849936] (2,-1; 2,-1), time: 7.2967s, #vars: 1437, #constrs: 783, improved: True
+Solving MIP for lay/input-3_122,[-3.135765314102173,2.3694114685058594]=>[-2.332048300096487,1.2595268191135525] (2,-1; 2,-1), time: 5.1007s, #vars: 1437, #constrs: 783, improved: True
+Solving MIP for lay/input-3_70,[-3.5786478519439697,2.018528461456299]=>[-2.656652949009437,0.9577849727089592] (2,-1; 2,-1), time: 3.4537s, #vars: 1437, #constrs: 783, improved: True
+/home/han/alpha-beta-CROWN/auto_LiRPA/auto_LiRPA/beta_crown.py:52: DeprecationWarning: __array__ implementation doesn't accept a copy keyword, so passing copy=False failed. __array__ must implement 'dtype' and 'copy' keyword arguments. To learn more, see the migration guide https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+  sign_numpy[bi, :split_len] = split_coeffs
+MIP improved 4 nodes out of 73 unstable nodes for layer /17, time 12.2961
+MIP got 0 timeout nodes out of 73 nodes for layer /17
+maximum relu layer improved by MIP so far 1
+Refine time 12.4866 exceeds the limit 9.600000000000001, stop refining.
+MIP finished with 12.486612319946289s
+Run final alpha-CROWN after MIP solving on layer 5 and relu idx 2
+0 /input torch.Size([1, 256])
+1 /input-3 torch.Size([1, 128])
+Early stop at 74th iter due to 10 iterations no improvement!
+best_l after optimization: -5.71905517578125
+alpha/beta optimization time: 4.5208353996276855
+alpha-CROWN with intermediate bounds improved by MIP: tensor([[-2.41265774, -2.02501202, -1.28138542]], device='cuda:0') None
+torch.Size([1, 3])
+refined global lb: tensor([[-2.41265774],
+        [-2.02501202],
+        [-1.28138542]], device='cuda:0') min: tensor(-2.41265774, device='cuda:0')
+0 / 3 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2]
+Unverified OR lbs (first 10 items): [[-2.4126577377319336], [-2.0250120162963867], [-1.2813854217529297]]
+###### Verifying property Instance 0 ######
+Batch size: 3
+First 10 spec matrices
+C: tensor([[[ 0.,  0.,  0.,  1.,  0., -1.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  0.,  1.,  0.,  0.,  0., -1.,  0.,  0.]],
+
+        [[ 0.,  0.,  0.,  1.,  0.,  0.,  0.,  0.,  0., -1.]]], device='cuda:0')
+RHS: tensor([[0.],
+        [0.],
+        [0.]], device='cuda:0')
+OR spec sizes: tensor([1, 1, 1], device='cuda:0', dtype=torch.int32)
+Remaining timeout: -11.705994844436646
+Model prediction is: tensor([ -6.87130260,  -4.78442621,  -2.42445850,  13.89417267, -10.14980602,
+          0.14393358, -16.74854279,  -2.47069621,  -2.55110216,  -0.49456671],
+       device='cuda:0')
+Activation BaB batch 1/1 
+build_with_refined_bounds batch [1/1]
+Optimizable variables initialized.
+all alpha initialized
+directly get lb and ub from refined bounds
+c shape: torch.Size([3, 1, 10])
+lA shapes: [torch.Size([3, 1, 256]), torch.Size([3, 1, 128])]
+torch.Size([3, 1])
+(alpha-)CROWN with fixed intermediate bounds: tensor([[-2.41265774],
+        [-2.02501202],
+        [-1.28138542]], device='cuda:0') tensor([[inf],
+        [inf],
+        [inf]], device='cuda:0')
+Intermediate layers: /input,/input-3
+Keeping alphas for these layers: ['/18']
+Node /15 input 0: size torch.Size([256]) unstable 133
+Node /17 input 0: size torch.Size([128]) unstable 73
+-----------------
+# of unstable neurons: 206
+-----------------
+
+BaB round 1
+batch: 3
+splitting decisions: 
+split level 0: [/input, 173] [/input, 104] [/input, 104] 
+best_l after optimization: -6.718275547027588
+beta sum per layer: [2.2899417877197266, 0.0]
+alpha/beta optimization time: 1.0940074920654297
+pruning_in_iteration open status: True
+ratio of positive domain = 2 / 6 = 0.33333333333333337
+pruning-in-iteration extra time: 0.023155689239501953
+torch.Size([6, 1])
+Time: prepare 0.0054    bound 1.0955    transfer 0.0014    finalize 0.0047    func 1.1072    
+Accumulated time: func 1.1072    prepare 0.0129    bound 1.0955    transfer 0.0014    finalize 0.0047    
+max lb tensor(9.99999975e-05) min lb tensor(-2.04467487)
+Number of Verified Splits: 2 of 6
+Current worst splitting domains lb-rhs (depth):
+-2.04467 (1), -2.01023 (1), -1.60761 (1), -1.05596 (1), 
+Length of domains: 4
+Current (lb-rhs): -2.044674873352051
+6 domains visited
+Time: pickout 0.0031    decision 0.2624    set_bounds 0.0019    solve 1.1096    add 0.0092    
+Accumulated time: pickout 0.0031    decision 0.2624    set_bounds 0.0019    solve 1.1096    add 0.0092    
+Time out!!!!!!!!
+Result: unknown in 25.1561 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 1, vnnlib ID: 31 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.011777 seconds
+Disabling Clip-and-Verify because it does not support bab-refine!
+Model: BoundedModule(
+  (/0): BoundInput(name=/0, inputs=[], perturbed=True)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/11): BoundParams(name=/11, inputs=[], perturbed=False)
+  (/12): BoundParams(name=/12, inputs=[], perturbed=False)
+  (/13): BoundFlatten(name=/13, inputs=[/0], perturbed=True)
+  (/input): BoundLinear(name=/input, inputs=[/13, /7, /8], perturbed=True)
+  (/15): BoundRelu(name=/15, inputs=[/input], perturbed=True)
+  (/input-3): BoundLinear(name=/input-3, inputs=[/15, /9, /10], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+  (/18): BoundLinear(name=/18, inputs=[/17, /11, /12], perturbed=True)
+)
+Original output in the first batch: tensor([[-6.14751196,  4.23742533, -2.04899907,  0.78201830, -2.44901013,
+         -2.92635274, -5.15217400,  0.36519837, -0.10439345, -2.49768138]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/15, inputs=[/input], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+build batch [1/1]
+layer /15 using sparse-features alpha with shape [208]; unstable size 208; total size 256 ([1, 256])
+layer /15 start_node /input-3 using full alpha [2, 128, 1, 208] with unstable size 124 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 208] with unstable size None total_size 9 output_shape 9
+layer /17 using full alpha with shape torch.Size([128]); unstable size 124; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 128] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+initial CROWN bounds (first 10 items): [-13.392436981201172, -15.67541217803955, -22.26375961303711, -14.068944931030273, -20.77090072631836, -13.008109092712402, -17.939682006835938, -17.543519973754883, -18.6014347076416]
+prune_after_crown optimization in use
+  original spec size = torch.Size([1, 9])
+  pruned spec size = torch.Size([1, 9])
+Using alpha-CROWN to initialize bounds.
+best_l after optimization: -127.82945251464844
+alpha/beta optimization time: 2.7358999252319336
+initial alpha-crown bounds (first 10 items): [-10.978628158569336, -13.297578811645508, -18.564115524291992, -11.857585906982422, -16.492307662963867, -10.792593002319336, -14.897626876831055, -15.112418174743652, -15.836597442626953]
+Global lower bound: -18.564115524291992
+torch.Size([1, 9])
+0 / 9 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-10.978628158569336], [-13.297578811645508], [-18.564115524291992], [-11.857585906982422], [-16.492307662963867], [-10.792593002319336], [-14.897626876831055], [-15.112418174743652], [-15.836597442626953]]
+Start solving intermediate bounds with MIP...
+layer /15 using sparse-features alpha with shape [208]; unstable size 208; total size 256 ([1, 256])
+layer /15 start_node /input-3 using full alpha [2, 128, 1, 208] with unstable size 124 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 208] with unstable size None total_size 9 output_shape 9
+layer /17 using full alpha with shape torch.Size([128]); unstable size 124; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 128] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+mip_multi_proc: 2, mip_threads: 1,total threads used: 2, mip_perneuron_refine_timeout: 5.0
+[total time budget for MIP: 9.600000000000001]
+
+refine the bounds for layer  /15
+maximum relu layer improved by MIP so far 0
+refine the bounds for layer  /17
+current relu layer: /17, idx: 1
+timeout for this layer is 5.0
+Removed 0 unstable neurons in MIP based on the coefficient matrix.
+PGD done for relu layer 1
+Solving MIP for lay/input-3_36,[-4.635201454162598,3.8026227951049805]=>[-3.315966742308966,2.280614839419254] (9,-1; 9,-1), time: 10.0289s, #vars: 1587, #constrs: 1008, improved: True
+Solving MIP for lay/input-3_102,[-5.7901105880737305,3.7839269638061523]=>[-4.196660188405278,2.3599036552746666] (9,-1; 9,-1), time: 10.0368s, #vars: 1587, #constrs: 1008, improved: True
+Solving MIP for lay/input-3_35,[-5.573188781738281,1.8416621685028076]=>[-4.2369272820761115,0.6735346130280655] (9,-1; 9,-1), time: 10.0385s, #vars: 1587, #constrs: 1008, improved: True
+Solving MIP for lay/input-3_73,[-4.9380598068237305,3.4325718879699707]=>[-3.480440124547833,2.0705820675498168] (9,-1; 9,-1), time: 10.0415s, #vars: 1587, #constrs: 1008, improved: True
+MIP improved 4 nodes out of 123 unstable nodes for layer /17, time 22.1940
+MIP got 4 timeout nodes out of 123 nodes for layer /17
+maximum relu layer improved by MIP so far 1
+Refine time 20.2451 exceeds the limit 9.600000000000001, stop refining.
+MIP finished with 20.24522876739502s
+Run final alpha-CROWN after MIP solving on layer 5 and relu idx 2
+0 /input torch.Size([1, 256])
+1 /input-3 torch.Size([1, 128])
+best_l after optimization: -122.88410186767578
+alpha/beta optimization time: 5.985952138900757
+alpha-CROWN with intermediate bounds improved by MIP: tensor([[-10.51401424, -12.82803345, -18.18061066, -11.08471012, -15.82273865,
+         -10.06755066, -14.44649124, -14.74661636, -15.19334221]],
+       device='cuda:0') None
+torch.Size([1, 9])
+refined global lb: tensor([[-10.51401424],
+        [-12.82803345],
+        [-18.18061066],
+        [-11.08471012],
+        [-15.82273865],
+        [-10.06755066],
+        [-14.44649124],
+        [-14.74661636],
+        [-15.19334221]], device='cuda:0') min: tensor(-18.18061066, device='cuda:0')
+0 / 9 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-10.51401424407959], [-12.828033447265625], [-18.18061065673828], [-11.084710121154785], [-15.822738647460938], [-10.067550659179688], [-14.446491241455078], [-14.74661636352539], [-15.193342208862305]]
+###### Verifying property Instance 1 ######
+Batch size: 9
+First 10 spec matrices
+C: tensor([[[-1.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1., -1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0., -1.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0., -1.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0., -1.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0., -1.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0.,  0., -1.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0.,  0.,  0., -1.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0., -1.]]], device='cuda:0')
+RHS: tensor([[0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.]], device='cuda:0')
+OR spec sizes: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0', dtype=torch.int32)
+Remaining timeout: -18.510406017303467
+Model prediction is: tensor([-6.14751196,  4.23742533, -2.04899907,  0.78201830, -2.44901013,
+        -2.92635274, -5.15217400,  0.36519837, -0.10439345, -2.49768138],
+       device='cuda:0')
+Activation BaB batch 1/1 
+build_with_refined_bounds batch [1/1]
+Optimizable variables initialized.
+all alpha initialized
+directly get lb and ub from refined bounds
+c shape: torch.Size([9, 1, 10])
+lA shapes: [torch.Size([9, 1, 256]), torch.Size([9, 1, 128])]
+torch.Size([9, 1])
+(alpha-)CROWN with fixed intermediate bounds: tensor([[-10.51401424],
+        [-12.82803345],
+        [-18.18061066],
+        [-11.08471012],
+        [-15.82273865],
+        [-10.06755066],
+        [-14.44649124],
+        [-14.74661636],
+        [-15.19334221]], device='cuda:0') tensor([[inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf]], device='cuda:0')
+Intermediate layers: /input,/input-3
+Keeping alphas for these layers: ['/18']
+Node /15 input 0: size torch.Size([256]) unstable 208
+Node /17 input 0: size torch.Size([128]) unstable 123
+-----------------
+# of unstable neurons: 331
+-----------------
+
+BaB round 1
+batch: 9
+splitting decisions: 
+split level 0: [/input-3, 102] [/input-3, 73] [/input, 160] [/input-3, 118] [/input, 135] [/input-3, 105] [/input-3, 118] [/input-3, 80] [/input-3, 27] 
+best_l after optimization: -231.924072265625
+beta sum per layer: [1.7351698875427246, 5.690248012542725]
+alpha/beta optimization time: 0.6784470081329346
+pruning_in_iteration open status: False
+ratio of positive domain = 0 / 18 = 0.0
+pruning-in-iteration extra time: 0.0004787445068359375
+torch.Size([18, 1])
+Time: prepare 0.0025    bound 0.6798    transfer 0.0017    finalize 0.0078    func 0.6920    
+Accumulated time: func 0.6920    prepare 0.0067    bound 0.6798    transfer 0.0017    finalize 0.0078    
+max lb tensor(-8.33327198) min lb tensor(-17.92252541)
+Number of Verified Splits: 0 of 18
+Current worst splitting domains lb-rhs (depth):
+-17.92253 (1), -17.18838 (1), -15.43876 (1), -14.97667 (1), -14.79106 (1), -14.56314 (1), -14.04724 (1), -14.04191 (1), -12.85684 (1), -12.60623 (1), -12.59141 (1), -12.10865 (1), -10.81408 (1), -10.14909 (1), -9.87655 (1), -9.81580 (1), -9.80247 (1), -8.33327 (1), 
+Length of domains: 18
+Current (lb-rhs): -17.92252540588379
+18 domains visited
+Time: pickout 0.0034    decision 0.0409    set_bounds 0.0017    solve 0.6936    add 0.0105    
+Accumulated time: pickout 0.0034    decision 0.0409    set_bounds 0.0017    solve 0.6936    add 0.0105    
+Time out!!!!!!!!
+Result: unknown in 31.3048 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 2, vnnlib ID: 32 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.009189 seconds
+Disabling Clip-and-Verify because it does not support bab-refine!
+Model: BoundedModule(
+  (/0): BoundInput(name=/0, inputs=[], perturbed=True)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/11): BoundParams(name=/11, inputs=[], perturbed=False)
+  (/12): BoundParams(name=/12, inputs=[], perturbed=False)
+  (/13): BoundFlatten(name=/13, inputs=[/0], perturbed=True)
+  (/input): BoundLinear(name=/input, inputs=[/13, /7, /8], perturbed=True)
+  (/15): BoundRelu(name=/15, inputs=[/input], perturbed=True)
+  (/input-3): BoundLinear(name=/input-3, inputs=[/15, /9, /10], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+  (/18): BoundLinear(name=/18, inputs=[/17, /11, /12], perturbed=True)
+)
+Original output in the first batch: tensor([[-11.22576427,  -5.30824184,  -4.77792788,  14.60945797,  -6.89201355,
+           2.64870644, -16.49145699,  -7.42085552,   0.40827218,  -1.06868637]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/15, inputs=[/input], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+build batch [1/1]
+layer /15 using sparse-features alpha with shape [120]; unstable size 120; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 73, 1, 120] with unstable size 72 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 120] with unstable size None total_size 9 output_shape 9
+layer /17 using sparse-features alpha with shape [72]; unstable size 72; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 72] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+initial CROWN bounds (first 10 items): [8.18112564086914, 3.899540901184082, 4.459072113037109, 1.3886384963989258, -5.2654852867126465, 9.589406967163086, 4.470998764038086, -0.19623374938964844, -0.7120399475097656]
+prune_after_crown optimization in use
+  original spec size = torch.Size([1, 9])
+  pruned spec size = torch.Size([1, 3])
+Using alpha-CROWN to initialize bounds.
+best_l after optimization: -4.536858081817627
+alpha/beta optimization time: 0.5637497901916504
+initial alpha-crown bounds (first 10 items): [-4.652194499969482, 0.1614828109741211, -0.046146392822265625]
+Global lower bound: -4.652194499969482
+torch.Size([1, 3])
+7 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 1, 2, 3, 5, 6, 7]
+Verified OR lbs (first 10 items): [[inf], [inf], [inf], [inf], [inf], [inf], [0.1614828109741211]]
+Unverified OR indices (first 10 items): [4, 8]
+Unverified OR lbs (first 10 items): [[-4.652194499969482], [-0.046146392822265625]]
+Start solving intermediate bounds with MIP...
+layer /15 using sparse-features alpha with shape [120]; unstable size 120; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 73, 1, 120] with unstable size 72 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 2, 1, 120] with unstable size None total_size 2 output_shape 2
+layer /17 using sparse-features alpha with shape [72]; unstable size 72; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 2, 1, 72] with unstable size None total_size 2 output_shape 2
+Optimizable variables initialized.
+mip_multi_proc: 2, mip_threads: 1,total threads used: 2, mip_perneuron_refine_timeout: 5.0
+[total time budget for MIP: 9.600000000000001]
+
+refine the bounds for layer  /15
+maximum relu layer improved by MIP so far 0
+refine the bounds for layer  /17
+current relu layer: /17, idx: 1
+timeout for this layer is 5.0
+Removed 0 unstable neurons in MIP based on the coefficient matrix.
+PGD done for relu layer 1
+Solving MIP for lay/input-3_70,[-1.7699294090270996,3.6337473392486572]=>[-0.812590868478972,2.918171434777047] (2,-1; 2,-1), time: 5.4414s, #vars: 1411, #constrs: 744, improved: True
+Solving MIP for lay/input-3_71,[-3.296097755432129,2.187541961669922]=>[-2.590839236049934,1.1630257115276863] (2,-1; 2,-1), time: 5.9399s, #vars: 1411, #constrs: 744, improved: True
+Solving MIP for lay/input-3_96,[-2.0966427326202393,2.7744579315185547]=>[-1.4114520029993456,1.8938789500700957] (2,-1; 2,-1), time: 3.1666s, #vars: 1411, #constrs: 744, improved: True
+Solving MIP for lay/input-3_81,[-2.8718655109405518,2.3094635009765625]=>[-1.7851999794351063,1.356711504582581] (2,-1; 2,-1), time: 6.4604s, #vars: 1411, #constrs: 744, improved: True
+MIP improved 4 nodes out of 72 unstable nodes for layer /17, time 14.2861
+MIP got 0 timeout nodes out of 72 nodes for layer /17
+maximum relu layer improved by MIP so far 1
+Refine time 14.5465 exceeds the limit 9.600000000000001, stop refining.
+MIP finished with 14.546542167663574s
+Run final alpha-CROWN after MIP solving on layer 5 and relu idx 2
+0 /input torch.Size([1, 256])
+1 /input-3 torch.Size([1, 128])
+Early stop at 67th iter due to 10 iterations no improvement!
+best_l after optimization: -3.5633177757263184
+alpha/beta optimization time: 3.2805464267730713
+alpha-CROWN with intermediate bounds improved by MIP: tensor([[-4.02597570,  0.46265793]], device='cuda:0') None
+torch.Size([1, 2])
+refined global lb: tensor([[-4.02597570],
+        [ 0.46265793]], device='cuda:0') min: tensor(-4.02597570, device='cuda:0')
+1 / 2 OR specs are verified.
+Verified OR indices (first 10 items): [1]
+Verified OR lbs (first 10 items): [[0.4626579284667969]]
+Unverified OR indices (first 10 items): [0]
+Unverified OR lbs (first 10 items): [[-4.025975704193115]]
+###### Verifying property Instance 2 ######
+Batch size: 1
+First 10 spec matrices
+C: tensor([[[ 0.,  0.,  0.,  1.,  0., -1.,  0.,  0.,  0.,  0.]]], device='cuda:0')
+RHS: tensor([[0.]], device='cuda:0')
+OR spec sizes: tensor([1], device='cuda:0', dtype=torch.int32)
+Remaining timeout: -7.2580578327178955
+Model prediction is: tensor([-11.22576427,  -5.30824184,  -4.77792788,  14.60945797,  -6.89201355,
+          2.64870644, -16.49145699,  -7.42085552,   0.40827218,  -1.06868637],
+       device='cuda:0')
+Activation BaB batch 1/1 
+build_with_refined_bounds batch [1/1]
+Optimizable variables initialized.
+all alpha initialized
+directly get lb and ub from refined bounds
+c shape: torch.Size([1, 1, 10])
+lA shapes: [torch.Size([1, 1, 256]), torch.Size([1, 1, 128])]
+torch.Size([1, 1])
+(alpha-)CROWN with fixed intermediate bounds: tensor([[-4.02597570]], device='cuda:0') tensor([[inf]], device='cuda:0')
+Intermediate layers: /input,/input-3
+Keeping alphas for these layers: ['/18']
+Node /15 input 0: size torch.Size([256]) unstable 120
+Node /17 input 0: size torch.Size([128]) unstable 72
+-----------------
+# of unstable neurons: 192
+-----------------
+
+BaB round 1
+batch: 1
+splitting decisions: 
+split level 0: [/input, 173] 
+split level 1: [/input-3, 68] 
+best_l after optimization: -9.01014232635498
+beta sum per layer: [2.9655449390411377, 2.8026797771453857]
+alpha/beta optimization time: 0.6318612098693848
+pruning_in_iteration open status: False
+ratio of positive domain = 0 / 4 = 0.0
+pruning-in-iteration extra time: 0.00033593177795410156
+torch.Size([4, 1])
+Time: prepare 0.0037    bound 0.6331    transfer 0.0008    finalize 0.0053    func 0.6429    
+Accumulated time: func 0.6429    prepare 0.0070    bound 0.6331    transfer 0.0008    finalize 0.0053    
+max lb tensor(-1.08246422) min lb tensor(-3.68923759)
+Number of Verified Splits: 0 of 4
+Current worst splitting domains lb-rhs (depth):
+-3.68924 (2), -2.27762 (2), -1.96082 (2), -1.08246 (2), 
+Length of domains: 4
+Current (lb-rhs): -3.689237594604492
+4 domains visited
+Time: pickout 0.0011    decision 0.0311    set_bounds 0.0011    solve 0.6439    add 0.0064    
+Accumulated time: pickout 0.0011    decision 0.0311    set_bounds 0.0011    solve 0.6439    add 0.0064    
+Time out!!!!!!!!
+Result: unknown in 19.9846 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 3, vnnlib ID: 33 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.008636 seconds
+Disabling Clip-and-Verify because it does not support bab-refine!
+Model: BoundedModule(
+  (/0): BoundInput(name=/0, inputs=[], perturbed=True)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/11): BoundParams(name=/11, inputs=[], perturbed=False)
+  (/12): BoundParams(name=/12, inputs=[], perturbed=False)
+  (/13): BoundFlatten(name=/13, inputs=[/0], perturbed=True)
+  (/input): BoundLinear(name=/input, inputs=[/13, /7, /8], perturbed=True)
+  (/15): BoundRelu(name=/15, inputs=[/input], perturbed=True)
+  (/input-3): BoundLinear(name=/input-3, inputs=[/15, /9, /10], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+  (/18): BoundLinear(name=/18, inputs=[/17, /11, /12], perturbed=True)
+)
+Original output in the first batch: tensor([[ 3.04305887, -6.81834936, -2.94865537, -7.95442390,  5.40456295,
+         -1.74643552, -0.39231810, -3.41582561, -3.34109378, -0.58277714]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/15, inputs=[/input], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+build batch [1/1]
+layer /15 using sparse-features alpha with shape [124]; unstable size 124; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 91, 1, 124] with unstable size 90 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 124] with unstable size None total_size 9 output_shape 9
+layer /17 using sparse-features alpha with shape [90]; unstable size 90; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 90] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+initial CROWN bounds (first 10 items): [-11.826131820678711, 0.9847469329833984, -3.924006462097168, -1.0025691986083984, -7.605860710144043, -8.306232452392578, -4.345485687255859, -4.213870525360107, -7.513502597808838]
+prune_after_crown optimization in use
+  original spec size = torch.Size([1, 9])
+  pruned spec size = torch.Size([1, 8])
+Using alpha-CROWN to initialize bounds.
+best_l after optimization: -42.24029541015625
+alpha/beta optimization time: 2.647115468978882
+initial alpha-crown bounds (first 10 items): [-11.037108421325684, -3.0663957595825195, -0.39560890197753906, -7.112458229064941, -7.007588863372803, -3.657670497894287, -3.6294713020324707, -6.333993434906006]
+Global lower bound: -11.037108421325684
+torch.Size([1, 8])
+1 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [1]
+Verified OR lbs (first 10 items): [[inf]]
+Unverified OR indices (first 10 items): [0, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-11.037108421325684], [-3.0663957595825195], [-0.39560890197753906], [-7.112458229064941], [-7.007588863372803], [-3.657670497894287], [-3.6294713020324707], [-6.333993434906006]]
+Start solving intermediate bounds with MIP...
+layer /15 using sparse-features alpha with shape [124]; unstable size 124; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 91, 1, 124] with unstable size 90 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 8, 1, 124] with unstable size None total_size 8 output_shape 8
+layer /17 using sparse-features alpha with shape [90]; unstable size 90; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 8, 1, 90] with unstable size None total_size 8 output_shape 8
+Optimizable variables initialized.
+mip_multi_proc: 2, mip_threads: 1,total threads used: 2, mip_perneuron_refine_timeout: 5.0
+[total time budget for MIP: 9.600000000000001]
+
+refine the bounds for layer  /15
+maximum relu layer improved by MIP so far 0
+refine the bounds for layer  /17
+current relu layer: /17, idx: 1
+timeout for this layer is 5.0
+Removed 0 unstable neurons in MIP based on the coefficient matrix.
+PGD done for relu layer 1
+Solving MIP for lay/input-3_81,[-1.890193223953247,3.1105947494506836]=>[-0.9707145656281507,2.0686562605016725] (2,-1; 2,-1), time: 5.3010s, #vars: 1419, #constrs: 756, improved: True
+Solving MIP for lay/input-3_25,[-3.071944236755371,2.297151565551758]=>[-2.4613774988113866,1.0099877425674675] (2,-1; 2,-1), time: 6.2212s, #vars: 1419, #constrs: 756, improved: True
+Solving MIP for lay/input-3_74,[-2.6601901054382324,2.1818630695343018]=>[-1.8507065396178115,1.3995614001961145] (2,-1; 2,-1), time: 2.6578s, #vars: 1419, #constrs: 756, improved: True
+Solving MIP for lay/input-3_0,[-1.0641759634017944,3.3822898864746094]=>[-0.23899071989771503,2.336872791716054] (2,-1; 9,-1), time: 8.1149s, #vars: 1419, #constrs: 756, improved: True
+Solving MIP for lay/input-3_44,[-1.7323087453842163,2.9131932258605957]=>[-0.6543961236691564,1.942605752690046] (9,-1; 2,-1), time: 9.9515s, #vars: 1419, #constrs: 756, improved: True
+MIP improved 5 nodes out of 89 unstable nodes for layer /17, time 18.0896
+MIP got 0 timeout nodes out of 89 nodes for layer /17
+maximum relu layer improved by MIP so far 1
+Refine time 18.4659 exceeds the limit 9.600000000000001, stop refining.
+MIP finished with 18.46595859527588s
+Run final alpha-CROWN after MIP solving on layer 5 and relu idx 2
+0 /input torch.Size([1, 256])
+1 /input-3 torch.Size([1, 128])
+best_l after optimization: -38.016807556152344
+alpha/beta optimization time: 10.343700408935547
+alpha-CROWN with intermediate bounds improved by MIP: tensor([[-10.41806126,  -2.64695740,   0.12920856,  -6.51979589,  -6.63936186,
+          -2.95011997,  -3.20810795,  -5.76361132]], device='cuda:0') None
+torch.Size([1, 8])
+refined global lb: tensor([[-10.41806126],
+        [ -2.64695740],
+        [  0.12920856],
+        [ -6.51979589],
+        [ -6.63936186],
+        [ -2.95011997],
+        [ -3.20810795],
+        [ -5.76361132]], device='cuda:0') min: tensor(-10.41806126, device='cuda:0')
+1 / 8 OR specs are verified.
+Verified OR indices (first 10 items): [2]
+Verified OR lbs (first 10 items): [[0.12920856475830078]]
+Unverified OR indices (first 10 items): [0, 1, 3, 4, 5, 6, 7]
+Unverified OR lbs (first 10 items): [[-10.418061256408691], [-2.6469573974609375], [-6.519795894622803], [-6.63936185836792], [-2.950119972229004], [-3.2081079483032227], [-5.763611316680908]]
+###### Verifying property Instance 3 ######
+Batch size: 7
+First 10 spec matrices
+C: tensor([[[-1.,  0.,  0.,  0.,  1.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  0., -1.,  0.,  1.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  0.,  0.,  1., -1.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  0.,  0.,  1.,  0., -1.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  0.,  0.,  1.,  0.,  0., -1.,  0.,  0.]],
+
+        [[ 0.,  0.,  0.,  0.,  1.,  0.,  0.,  0., -1.,  0.]],
+
+        [[ 0.,  0.,  0.,  0.,  1.,  0.,  0.,  0.,  0., -1.]]], device='cuda:0')
+RHS: tensor([[0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.]], device='cuda:0')
+OR spec sizes: tensor([1, 1, 1, 1, 1, 1, 1], device='cuda:0', dtype=torch.int32)
+Remaining timeout: -21.317689418792725
+Model prediction is: tensor([ 3.04305887, -6.81834936, -2.94865537, -7.95442390,  5.40456295,
+        -1.74643552, -0.39231810, -3.41582561, -3.34109378, -0.58277714],
+       device='cuda:0')
+Activation BaB batch 1/1 
+build_with_refined_bounds batch [1/1]
+Optimizable variables initialized.
+all alpha initialized
+directly get lb and ub from refined bounds
+c shape: torch.Size([7, 1, 10])
+lA shapes: [torch.Size([7, 1, 256]), torch.Size([7, 1, 128])]
+torch.Size([7, 1])
+(alpha-)CROWN with fixed intermediate bounds: tensor([[-10.41806126],
+        [ -2.64695740],
+        [ -6.51979589],
+        [ -6.63936186],
+        [ -2.95011997],
+        [ -3.20810795],
+        [ -5.76361132]], device='cuda:0') tensor([[inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf]], device='cuda:0')
+Intermediate layers: /input,/input-3
+Keeping alphas for these layers: ['/18']
+Node /15 input 0: size torch.Size([256]) unstable 124
+Node /17 input 0: size torch.Size([128]) unstable 89
+-----------------
+# of unstable neurons: 213
+-----------------
+
+BaB round 1
+batch: 7
+splitting decisions: 
+split level 0: [/input, 243] [/input-3, 104] [/input, 135] [/input, 243] [/input, 222] [/input, 163] [/input, 243] 
+best_l after optimization: -68.5469970703125
+beta sum per layer: [2.8113467693328857, 1.229028344154358]
+alpha/beta optimization time: 2.5919148921966553
+pruning_in_iteration open status: False
+ratio of positive domain = 0 / 14 = 0.0
+pruning-in-iteration extra time: 0.0019283294677734375
+torch.Size([14, 1])
+Time: prepare 0.0124    bound 2.5952    transfer 0.0029    finalize 0.0180    func 2.6288    
+Accumulated time: func 2.6288    prepare 0.0369    bound 2.5952    transfer 0.0029    finalize 0.0180    
+max lb tensor(-1.08833218) min lb tensor(-10.07219124)
+Number of Verified Splits: 0 of 14
+Current worst splitting domains lb-rhs (depth):
+-10.07219 (1), -9.97633 (1), -6.30868 (1), -6.21181 (1), -6.11370 (1), -5.51673 (1), -5.39015 (1), -4.98509 (1), -3.01816 (1), -2.73273 (1), -2.65756 (1), -2.45609 (1), -2.01946 (1), -1.08833 (1), 
+Length of domains: 14
+Current (lb-rhs): -10.07219123840332
+14 domains visited
+Time: pickout 0.0084    decision 0.1862    set_bounds 0.0094    solve 2.6316    add 0.0166    
+Accumulated time: pickout 0.0084    decision 0.1862    set_bounds 0.0094    solve 2.6316    add 0.0166    
+Time out!!!!!!!!
+Result: unknown in 36.3259 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 4, vnnlib ID: 34 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.027140 seconds
+Disabling Clip-and-Verify because it does not support bab-refine!
+Model: BoundedModule(
+  (/0): BoundInput(name=/0, inputs=[], perturbed=True)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/11): BoundParams(name=/11, inputs=[], perturbed=False)
+  (/12): BoundParams(name=/12, inputs=[], perturbed=False)
+  (/13): BoundFlatten(name=/13, inputs=[/0], perturbed=True)
+  (/input): BoundLinear(name=/input, inputs=[/13, /7, /8], perturbed=True)
+  (/15): BoundRelu(name=/15, inputs=[/input], perturbed=True)
+  (/input-3): BoundLinear(name=/input-3, inputs=[/15, /9, /10], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+  (/18): BoundLinear(name=/18, inputs=[/17, /11, /12], perturbed=True)
+)
+Original output in the first batch: tensor([[ -4.40887928,  -3.22519064,   5.24171495,   3.35432291,  -9.04655361,
+          -8.37625027, -16.60267448,  11.82760620,   0.19701687,  -5.24124098]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/15, inputs=[/input], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+build batch [1/1]
+layer /15 using sparse-features alpha with shape [144]; unstable size 144; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 80, 1, 144] with unstable size 79 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 144] with unstable size None total_size 9 output_shape 9
+layer /17 using sparse-features alpha with shape [79]; unstable size 79; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 79] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+initial CROWN bounds (first 10 items): [-0.9834585189819336, 0.8481464385986328, -9.535395622253418, -6.809277534484863, 5.433226585388184, 0.8503990173339844, 6.3515214920043945, -7.688074111938477, 0.2749300003051758]
+prune_after_crown optimization in use
+  original spec size = torch.Size([1, 9])
+  pruned spec size = torch.Size([1, 4])
+Using alpha-CROWN to initialize bounds.
+best_l after optimization: -18.94367027282715
+alpha/beta optimization time: 9.867291927337646
+initial alpha-crown bounds (first 10 items): [0.30519866943359375, -7.535177230834961, -5.736380100250244, -5.977311134338379]
+Global lower bound: -7.535177230834961
+torch.Size([1, 4])
+6 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 1, 4, 5, 6, 8]
+Verified OR lbs (first 10 items): [[0.30519866943359375], [inf], [inf], [inf], [inf], [inf]]
+Unverified OR indices (first 10 items): [2, 3, 7]
+Unverified OR lbs (first 10 items): [[-7.535177230834961], [-5.736380100250244], [-5.977311134338379]]
+Start solving intermediate bounds with MIP...
+layer /15 using sparse-features alpha with shape [144]; unstable size 144; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 80, 1, 144] with unstable size 79 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 3, 1, 144] with unstable size None total_size 3 output_shape 3
+layer /17 using sparse-features alpha with shape [79]; unstable size 79; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 3, 1, 79] with unstable size None total_size 3 output_shape 3
+Optimizable variables initialized.
+mip_multi_proc: 2, mip_threads: 1,total threads used: 2, mip_perneuron_refine_timeout: 5.0
+[total time budget for MIP: 9.600000000000001]
+
+refine the bounds for layer  /15
+maximum relu layer improved by MIP so far 0
+refine the bounds for layer  /17
+current relu layer: /17, idx: 1
+timeout for this layer is 5.0
+Removed 0 unstable neurons in MIP based on the coefficient matrix.
+PGD done for relu layer 1
+Solving MIP for lay/input-3_0,[-2.416107654571533,3.1284632682800293]=>[-1.4755088765566562,1.9142427674253364] (2,-1; 9,-1), time: 8.7495s, #vars: 1459, #constrs: 816, improved: True
+Solving MIP for lay/input-3_40,[-2.718888282775879,2.8832054138183594]=>[-1.8134754874483572,1.6520337231990445] (2,-1; 9,-1), time: 8.8390s, #vars: 1459, #constrs: 816, improved: True
+MIP improved 2 nodes out of 75 unstable nodes for layer /17, time 13.9300
+MIP got 0 timeout nodes out of 75 nodes for layer /17
+maximum relu layer improved by MIP so far 1
+Refine time 14.6914 exceeds the limit 9.600000000000001, stop refining.
+MIP finished with 14.691534280776978s
+Run final alpha-CROWN after MIP solving on layer 5 and relu idx 2
+0 /input torch.Size([1, 256])
+1 /input-3 torch.Size([1, 128])
+Early stop at 39th iter due to 10 iterations no improvement!
+best_l after optimization: -18.4656925201416
+alpha/beta optimization time: 4.635262727737427
+alpha-CROWN with intermediate bounds improved by MIP: tensor([[-7.37605143, -5.34094572, -5.74869442]], device='cuda:0') None
+torch.Size([1, 3])
+refined global lb: tensor([[-7.37605143],
+        [-5.34094572],
+        [-5.74869442]], device='cuda:0') min: tensor(-7.37605143, device='cuda:0')
+0 / 3 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2]
+Unverified OR lbs (first 10 items): [[-7.376051425933838], [-5.340945720672607], [-5.74869441986084]]
+###### Verifying property Instance 4 ######
+Batch size: 3
+First 10 spec matrices
+C: tensor([[[ 0.,  0., -1.,  0.,  0.,  0.,  0.,  1.,  0.,  0.]],
+
+        [[ 0.,  0.,  0., -1.,  0.,  0.,  0.,  1.,  0.,  0.]],
+
+        [[ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  1., -1.,  0.]]], device='cuda:0')
+RHS: tensor([[0.],
+        [0.],
+        [0.]], device='cuda:0')
+OR spec sizes: tensor([1, 1, 1], device='cuda:0', dtype=torch.int32)
+Remaining timeout: -20.480804681777954
+Model prediction is: tensor([ -4.40887928,  -3.22519064,   5.24171495,   3.35432291,  -9.04655361,
+         -8.37625027, -16.60267448,  11.82760620,   0.19701687,  -5.24124098],
+       device='cuda:0')
+Activation BaB batch 1/1 
+build_with_refined_bounds batch [1/1]
+Optimizable variables initialized.
+all alpha initialized
+directly get lb and ub from refined bounds
+c shape: torch.Size([3, 1, 10])
+lA shapes: [torch.Size([3, 1, 256]), torch.Size([3, 1, 128])]
+torch.Size([3, 1])
+(alpha-)CROWN with fixed intermediate bounds: tensor([[-7.37605143],
+        [-5.34094572],
+        [-5.74869442]], device='cuda:0') tensor([[inf],
+        [inf],
+        [inf]], device='cuda:0')
+Intermediate layers: /input,/input-3
+Keeping alphas for these layers: ['/18']
+Node /15 input 0: size torch.Size([256]) unstable 144
+Node /17 input 0: size torch.Size([128]) unstable 75
+-----------------
+# of unstable neurons: 219
+-----------------
+
+BaB round 1
+batch: 3
+splitting decisions: 
+split level 0: [/input-3, 103] [/input-3, 102] [/input-3, 27] 
+best_l after optimization: -32.58154296875
+beta sum per layer: [0.0, 2.3334927558898926]
+alpha/beta optimization time: 2.4899115562438965
+pruning_in_iteration open status: False
+ratio of positive domain = 0 / 6 = 0.0
+pruning-in-iteration extra time: 0.0017910003662109375
+torch.Size([6, 1])
+Time: prepare 0.0092    bound 2.4933    transfer 0.0055    finalize 0.0193    func 2.5275    
+Accumulated time: func 2.5275    prepare 0.0283    bound 2.4933    transfer 0.0055    finalize 0.0193    
+max lb tensor(-3.74034595) min lb tensor(-7.22575283)
+Number of Verified Splits: 0 of 6
+Current worst splitting domains lb-rhs (depth):
+-7.22575 (1), -5.74650 (1), -5.46473 (1), -5.35653 (1), -5.04768 (1), -3.74035 (1), 
+Length of domains: 6
+Current (lb-rhs): -7.225752830505371
+6 domains visited
+Time: pickout 0.0041    decision 0.1384    set_bounds 0.0026    solve 2.5307    add 0.0124    
+Accumulated time: pickout 0.0041    decision 0.1384    set_bounds 0.0026    solve 2.5307    add 0.0124    
+Time out!!!!!!!!
+Result: unknown in 35.2829 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 5, vnnlib ID: 35 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.024740 seconds
+Disabling Clip-and-Verify because it does not support bab-refine!
+Model: BoundedModule(
+  (/0): BoundInput(name=/0, inputs=[], perturbed=True)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/11): BoundParams(name=/11, inputs=[], perturbed=False)
+  (/12): BoundParams(name=/12, inputs=[], perturbed=False)
+  (/13): BoundFlatten(name=/13, inputs=[/0], perturbed=True)
+  (/input): BoundLinear(name=/input, inputs=[/13, /7, /8], perturbed=True)
+  (/15): BoundRelu(name=/15, inputs=[/input], perturbed=True)
+  (/input-3): BoundLinear(name=/input-3, inputs=[/15, /9, /10], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+  (/18): BoundLinear(name=/18, inputs=[/17, /11, /12], perturbed=True)
+)
+Original output in the first batch: tensor([[ -4.35675192,   2.21047044,   9.87336445,   0.34100029, -11.18870640,
+          -1.70144093,  -9.58204079,  -0.06728010,   0.28037015,  -6.61663151]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/15, inputs=[/input], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+build batch [1/1]
+layer /15 using sparse-features alpha with shape [134]; unstable size 134; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 72, 1, 134] with unstable size 71 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 134] with unstable size None total_size 9 output_shape 9
+layer /17 using sparse-features alpha with shape [71]; unstable size 71; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 71] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+initial CROWN bounds (first 10 items): [3.25848388671875, -2.3783273696899414, -1.4028372764587402, 6.978362083435059, -4.041085243225098, 5.539724349975586, -0.022437095642089844, -3.589433193206787, 2.4133644104003906]
+prune_after_crown optimization in use
+  original spec size = torch.Size([1, 9])
+  pruned spec size = torch.Size([1, 5])
+Using alpha-CROWN to initialize bounds.
+best_l after optimization: -8.311559677124023
+alpha/beta optimization time: 7.42412805557251
+initial alpha-crown bounds (first 10 items): [-1.9072537422180176, -0.7594852447509766, -3.393937110900879, 0.5881843566894531, -2.8390684127807617]
+Global lower bound: -3.393937110900879
+torch.Size([1, 5])
+5 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 3, 5, 6, 8]
+Verified OR lbs (first 10 items): [[inf], [inf], [inf], [0.5881843566894531], [inf]]
+Unverified OR indices (first 10 items): [1, 2, 4, 7]
+Unverified OR lbs (first 10 items): [[-1.9072537422180176], [-0.7594852447509766], [-3.393937110900879], [-2.8390684127807617]]
+Start solving intermediate bounds with MIP...
+layer /15 using sparse-features alpha with shape [134]; unstable size 134; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 72, 1, 134] with unstable size 71 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 4, 1, 134] with unstable size None total_size 4 output_shape 4
+layer /17 using sparse-features alpha with shape [71]; unstable size 71; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 4, 1, 71] with unstable size None total_size 4 output_shape 4
+Optimizable variables initialized.
+mip_multi_proc: 2, mip_threads: 1,total threads used: 2, mip_perneuron_refine_timeout: 5.0
+[total time budget for MIP: 9.600000000000001]
+
+refine the bounds for layer  /15
+maximum relu layer improved by MIP so far 0
+refine the bounds for layer  /17
+current relu layer: /17, idx: 1
+timeout for this layer is 5.0
+Removed 0 unstable neurons in MIP based on the coefficient matrix.
+PGD done for relu layer 1
+Solving MIP for lay/input-3_6,[-2.4794633388519287,2.607656955718994]=>[-1.5000409588847707,1.4820097701814345] (2,-1; 2,-1), time: 6.1518s, #vars: 1439, #constrs: 786, improved: True
+Solving MIP for lay/input-3_62,[-3.046335220336914,2.221247911453247]=>[-2.1014084729733646,1.2106948504398436] (2,-1; 2,-1), time: 6.2723s, #vars: 1439, #constrs: 786, improved: True
+Solving MIP for lay/input-3_71,[-1.5333499908447266,3.468446731567383]=>[-0.682257948598076,2.496032474504396] (2,-1; 2,-1), time: 5.0899s, #vars: 1439, #constrs: 786, improved: True
+Solving MIP for lay/input-3_117,[-1.8621547222137451,2.267251968383789]=>[-1.2767867262711272,1.2213158747399422] (2,-1; 9,-1), time: 6.7747s, #vars: 1439, #constrs: 786, improved: True
+MIP improved 4 nodes out of 69 unstable nodes for layer /17, time 14.4906
+MIP got 0 timeout nodes out of 69 nodes for layer /17
+maximum relu layer improved by MIP so far 1
+Refine time 14.7373 exceeds the limit 9.600000000000001, stop refining.
+MIP finished with 14.737282752990723s
+Run final alpha-CROWN after MIP solving on layer 5 and relu idx 2
+0 /input torch.Size([1, 256])
+1 /input-3 torch.Size([1, 128])
+Early stop at 60th iter due to 10 iterations no improvement!
+best_l after optimization: -6.720897674560547
+alpha/beta optimization time: 3.5068604946136475
+alpha-CROWN with intermediate bounds improved by MIP: tensor([[-1.38497734, -0.23607397, -2.68898630, -2.41086006]], device='cuda:0') None
+torch.Size([1, 4])
+refined global lb: tensor([[-1.38497734],
+        [-0.23607397],
+        [-2.68898630],
+        [-2.41086006]], device='cuda:0') min: tensor(-2.68898630, device='cuda:0')
+0 / 4 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2, 3]
+Unverified OR lbs (first 10 items): [[-1.3849773406982422], [-0.23607397079467773], [-2.688986301422119], [-2.410860061645508]]
+###### Verifying property Instance 5 ######
+Batch size: 4
+First 10 spec matrices
+C: tensor([[[ 0., -1.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  1., -1.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  1.,  0.,  0., -1.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  1.,  0.,  0.,  0.,  0.,  0., -1.,  0.]]], device='cuda:0')
+RHS: tensor([[0.],
+        [0.],
+        [0.],
+        [0.]], device='cuda:0')
+OR spec sizes: tensor([1, 1, 1, 1], device='cuda:0', dtype=torch.int32)
+Remaining timeout: -16.15909194946289
+Model prediction is: tensor([ -4.35675192,   2.21047044,   9.87336445,   0.34100029, -11.18870640,
+         -1.70144093,  -9.58204079,  -0.06728010,   0.28037015,  -6.61663151],
+       device='cuda:0')
+Activation BaB batch 1/1 
+build_with_refined_bounds batch [1/1]
+Optimizable variables initialized.
+all alpha initialized
+directly get lb and ub from refined bounds
+c shape: torch.Size([4, 1, 10])
+lA shapes: [torch.Size([4, 1, 256]), torch.Size([4, 1, 128])]
+torch.Size([4, 1])
+(alpha-)CROWN with fixed intermediate bounds: tensor([[-1.38497734],
+        [-0.23607397],
+        [-2.68898630],
+        [-2.41086006]], device='cuda:0') tensor([[inf],
+        [inf],
+        [inf],
+        [inf]], device='cuda:0')
+Intermediate layers: /input,/input-3
+Keeping alphas for these layers: ['/18']
+Node /15 input 0: size torch.Size([256]) unstable 134
+Node /17 input 0: size torch.Size([128]) unstable 69
+-----------------
+# of unstable neurons: 203
+-----------------
+
+BaB round 1
+batch: 4
+splitting decisions: 
+split level 0: [/input, 116] [/input-3, 74] [/input, 116] [/input-3, 85] 
+best_l after optimization: -10.039813041687012
+beta sum per layer: [0.8064141273498535, 0.0]
+alpha/beta optimization time: 1.0522100925445557
+pruning_in_iteration open status: False
+ratio of positive domain = 1 / 8 = 0.125
+pruning-in-iteration extra time: 0.0008234977722167969
+torch.Size([8, 1])
+Time: prepare 0.0111    bound 1.0541    transfer 0.0012    finalize 0.0067    func 1.0734    
+Accumulated time: func 1.0734    prepare 0.0267    bound 1.0541    transfer 0.0012    finalize 0.0067    
+max lb tensor(0.03563786) min lb tensor(-2.33791447)
+Number of Verified Splits: 1 of 8
+Current worst splitting domains lb-rhs (depth):
+-2.33791 (1), -2.17392 (1), -2.15456 (1), -1.86825 (1), -0.87399 (1), -0.65055 (1), -0.01628 (1), 
+Length of domains: 7
+Current (lb-rhs): -2.33791446685791
+8 domains visited
+Time: pickout 0.0029    decision 0.1145    set_bounds 0.0086    solve 1.0753    add 0.0088    
+Accumulated time: pickout 0.0029    decision 0.1145    set_bounds 0.0086    solve 1.0753    add 0.0088    
+Time out!!!!!!!!
+Result: unknown in 29.4606 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 6, vnnlib ID: 36 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.008537 seconds
+Disabling Clip-and-Verify because it does not support bab-refine!
+Model: BoundedModule(
+  (/0): BoundInput(name=/0, inputs=[], perturbed=True)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/11): BoundParams(name=/11, inputs=[], perturbed=False)
+  (/12): BoundParams(name=/12, inputs=[], perturbed=False)
+  (/13): BoundFlatten(name=/13, inputs=[/0], perturbed=True)
+  (/input): BoundLinear(name=/input, inputs=[/13, /7, /8], perturbed=True)
+  (/15): BoundRelu(name=/15, inputs=[/input], perturbed=True)
+  (/input-3): BoundLinear(name=/input-3, inputs=[/15, /9, /10], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+  (/18): BoundLinear(name=/18, inputs=[/17, /11, /12], perturbed=True)
+)
+Original output in the first batch: tensor([[ -3.15769482,  -2.61087847,   6.56992912,   1.93310201, -11.23005581,
+          -7.10100317, -15.41036701,  11.72365475,  -1.90874600,  -3.11545277]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/15, inputs=[/input], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+build batch [1/1]
+layer /15 using sparse-features alpha with shape [128]; unstable size 128; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 80, 1, 128] with unstable size 79 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 128] with unstable size None total_size 9 output_shape 9
+layer /17 using sparse-features alpha with shape [79]; unstable size 79; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 79] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+initial CROWN bounds (first 10 items): [-2.761150360107422, 0.516047477722168, -9.42575454711914, -6.003692626953125, 8.036548614501953, -0.05039024353027344, 4.770464897155762, -4.963650703430176, -0.7362556457519531]
+prune_after_crown optimization in use
+  original spec size = torch.Size([1, 9])
+  pruned spec size = torch.Size([1, 6])
+Using alpha-CROWN to initialize bounds.
+best_l after optimization: -14.76778793334961
+alpha/beta optimization time: 2.902137279510498
+initial alpha-crown bounds (first 10 items): [-1.187727928161621, -7.359447956085205, -4.46074104309082, 1.8625659942626953, -3.4417057037353516, -0.18073081970214844]
+Global lower bound: -7.359447956085205
+torch.Size([1, 6])
+4 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [1, 4, 5, 6]
+Verified OR lbs (first 10 items): [[inf], [inf], [1.8625659942626953], [inf]]
+Unverified OR indices (first 10 items): [0, 2, 3, 7, 8]
+Unverified OR lbs (first 10 items): [[-1.187727928161621], [-7.359447956085205], [-4.46074104309082], [-3.4417057037353516], [-0.18073081970214844]]
+Start solving intermediate bounds with MIP...
+layer /15 using sparse-features alpha with shape [128]; unstable size 128; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 80, 1, 128] with unstable size 79 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 5, 1, 128] with unstable size None total_size 5 output_shape 5
+layer /17 using sparse-features alpha with shape [79]; unstable size 79; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 5, 1, 79] with unstable size None total_size 5 output_shape 5
+Optimizable variables initialized.
+mip_multi_proc: 2, mip_threads: 1,total threads used: 2, mip_perneuron_refine_timeout: 5.0
+[total time budget for MIP: 9.600000000000001]
+
+refine the bounds for layer  /15
+maximum relu layer improved by MIP so far 0
+refine the bounds for layer  /17
+current relu layer: /17, idx: 1
+timeout for this layer is 5.0
+Removed 0 unstable neurons in MIP based on the coefficient matrix.
+PGD done for relu layer 1
+Solving MIP for lay/input-3_102,[-4.167710304260254,3.674515962600708]=>[-2.601455249242711,2.6328558515595577] (2,-1; 2,-1), time: 5.5283s, #vars: 1427, #constrs: 768, improved: True
+Solving MIP for lay/input-3_40,[-3.779202461242676,2.0984435081481934]=>[-3.1754534830298784,0.6355783863454205] (2,-1; 9,-1), time: 6.4986s, #vars: 1427, #constrs: 768, improved: True
+Solving MIP for lay/input-3_27,[-4.298685073852539,1.3424935340881348]=>[-3.300777730640452,0.3936200556913674] (2,-1; 2,-1), time: 6.3124s, #vars: 1427, #constrs: 768, improved: True
+Solving MIP for lay/input-3_0,[-3.5718026161193848,2.366286039352417]=>[-2.910976323694283,0.974359912326522] (2,-1; 9,-1), time: 7.6919s, #vars: 1427, #constrs: 768, improved: True
+MIP improved 4 nodes out of 77 unstable nodes for layer /17, time 11.4773
+MIP got 0 timeout nodes out of 77 nodes for layer /17
+maximum relu layer improved by MIP so far 1
+Refine time 11.7457 exceeds the limit 9.600000000000001, stop refining.
+MIP finished with 11.745781421661377s
+Run final alpha-CROWN after MIP solving on layer 5 and relu idx 2
+0 /input torch.Size([1, 256])
+1 /input-3 torch.Size([1, 128])
+Early stop at 98th iter due to 10 iterations no improvement!
+best_l after optimization: -12.78042984008789
+alpha/beta optimization time: 6.920409917831421
+alpha-CROWN with intermediate bounds improved by MIP: tensor([[-0.32080841, -7.05088043, -3.40603495, -2.73589897,  0.73319340]],
+       device='cuda:0') None
+torch.Size([1, 5])
+refined global lb: tensor([[-0.32080841],
+        [-7.05088043],
+        [-3.40603495],
+        [-2.73589897],
+        [ 0.73319340]], device='cuda:0') min: tensor(-7.05088043, device='cuda:0')
+1 / 5 OR specs are verified.
+Verified OR indices (first 10 items): [4]
+Verified OR lbs (first 10 items): [[0.7331933975219727]]
+Unverified OR indices (first 10 items): [0, 1, 2, 3]
+Unverified OR lbs (first 10 items): [[-0.32080841064453125], [-7.050880432128906], [-3.4060349464416504], [-2.735898971557617]]
+###### Verifying property Instance 6 ######
+Batch size: 4
+First 10 spec matrices
+C: tensor([[[-1.,  0.,  0.,  0.,  0.,  0.,  0.,  1.,  0.,  0.]],
+
+        [[ 0.,  0., -1.,  0.,  0.,  0.,  0.,  1.,  0.,  0.]],
+
+        [[ 0.,  0.,  0., -1.,  0.,  0.,  0.,  1.,  0.,  0.]],
+
+        [[ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  1., -1.,  0.]]], device='cuda:0')
+RHS: tensor([[0.],
+        [0.],
+        [0.],
+        [0.]], device='cuda:0')
+OR spec sizes: tensor([1, 1, 1, 1], device='cuda:0', dtype=torch.int32)
+Remaining timeout: -10.580158233642578
+Model prediction is: tensor([ -3.15769482,  -2.61087847,   6.56992912,   1.93310201, -11.23005581,
+         -7.10100317, -15.41036701,  11.72365475,  -1.90874600,  -3.11545277],
+       device='cuda:0')
+Activation BaB batch 1/1 
+build_with_refined_bounds batch [1/1]
+Optimizable variables initialized.
+all alpha initialized
+directly get lb and ub from refined bounds
+c shape: torch.Size([4, 1, 10])
+lA shapes: [torch.Size([4, 1, 256]), torch.Size([4, 1, 128])]
+torch.Size([4, 1])
+(alpha-)CROWN with fixed intermediate bounds: tensor([[-0.32080841],
+        [-7.05088043],
+        [-3.40603495],
+        [-2.73589897]], device='cuda:0') tensor([[inf],
+        [inf],
+        [inf],
+        [inf]], device='cuda:0')
+Intermediate layers: /input,/input-3
+Keeping alphas for these layers: ['/18']
+Node /15 input 0: size torch.Size([256]) unstable 128
+Node /17 input 0: size torch.Size([128]) unstable 77
+-----------------
+# of unstable neurons: 205
+-----------------
+
+BaB round 1
+batch: 4
+splitting decisions: 
+split level 0: [/input-3, 11] [/input-3, 72] [/input-3, 102] [/input-3, 11] 
+best_l after optimization: -22.384532928466797
+beta sum per layer: [0.0, 1.7291247844696045]
+alpha/beta optimization time: 0.7482330799102783
+pruning_in_iteration open status: False
+ratio of positive domain = 1 / 8 = 0.125
+pruning-in-iteration extra time: 0.00029468536376953125
+torch.Size([8, 1])
+Time: prepare 0.0022    bound 0.7496    transfer 0.0017    finalize 0.0053    func 0.7588    
+Accumulated time: func 0.7588    prepare 0.0130    bound 0.7496    transfer 0.0017    finalize 0.0053    
+max lb tensor(0.46789932) min lb tensor(-6.87879658)
+Number of Verified Splits: 1 of 8
+Current worst splitting domains lb-rhs (depth):
+-6.87880 (1), -5.21884 (1), -3.02550 (1), -3.01200 (1), -2.42572 (1), -2.22880 (1), -0.06277 (1), 
+Length of domains: 7
+Current (lb-rhs): -6.878796577453613
+8 domains visited
+Time: pickout 0.0017    decision 0.0466    set_bounds 0.0012    solve 0.7598    add 0.0058    
+Accumulated time: pickout 0.0017    decision 0.0466    set_bounds 0.0012    solve 0.7598    add 0.0058    
+Time out!!!!!!!!
+Result: unknown in 23.4368 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 7, vnnlib ID: 37 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.008908 seconds
+Disabling Clip-and-Verify because it does not support bab-refine!
+Model: BoundedModule(
+  (/0): BoundInput(name=/0, inputs=[], perturbed=True)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/11): BoundParams(name=/11, inputs=[], perturbed=False)
+  (/12): BoundParams(name=/12, inputs=[], perturbed=False)
+  (/13): BoundFlatten(name=/13, inputs=[/0], perturbed=True)
+  (/input): BoundLinear(name=/input, inputs=[/13, /7, /8], perturbed=True)
+  (/15): BoundRelu(name=/15, inputs=[/input], perturbed=True)
+  (/input-3): BoundLinear(name=/input-3, inputs=[/15, /9, /10], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+  (/18): BoundLinear(name=/18, inputs=[/17, /11, /12], perturbed=True)
+)
+Original output in the first batch: tensor([[-8.20110512,  6.72890472, -2.85314655, -0.50641757, -2.77623200,
+         -5.07252026, -6.77379894,  0.20286198,  0.86953735, -4.04782248]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/15, inputs=[/input], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+build batch [1/1]
+layer /15 using sparse-features alpha with shape [179]; unstable size 179; total size 256 ([1, 256])
+layer /15 start_node /input-3 using full alpha [2, 128, 1, 179] with unstable size 116 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 179] with unstable size None total_size 9 output_shape 9
+layer /17 using full alpha with shape torch.Size([128]); unstable size 116; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 128] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+initial CROWN bounds (first 10 items): [-7.0094451904296875, -11.192774772644043, -17.527999877929688, -9.809783935546875, -14.502483367919922, -8.544733047485352, -14.18575668334961, -14.967070579528809, -12.883031845092773]
+prune_after_crown optimization in use
+  original spec size = torch.Size([1, 9])
+  pruned spec size = torch.Size([1, 9])
+Using alpha-CROWN to initialize bounds.
+best_l after optimization: -94.50232696533203
+alpha/beta optimization time: 3.063260316848755
+initial alpha-crown bounds (first 10 items): [-5.656279563903809, -10.049651145935059, -15.636975288391113, -7.891640663146973, -12.333662033081055, -7.088092803955078, -11.779573440551758, -13.427450180053711, -10.63900375366211]
+Global lower bound: -15.636975288391113
+torch.Size([1, 9])
+0 / 9 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-5.656279563903809], [-10.049651145935059], [-15.636975288391113], [-7.891640663146973], [-12.333662033081055], [-7.088092803955078], [-11.779573440551758], [-13.427450180053711], [-10.63900375366211]]
+Start solving intermediate bounds with MIP...
+layer /15 using sparse-features alpha with shape [179]; unstable size 179; total size 256 ([1, 256])
+layer /15 start_node /input-3 using full alpha [2, 128, 1, 179] with unstable size 116 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 179] with unstable size None total_size 9 output_shape 9
+layer /17 using full alpha with shape torch.Size([128]); unstable size 116; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 128] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+mip_multi_proc: 2, mip_threads: 1,total threads used: 2, mip_perneuron_refine_timeout: 5.0
+[total time budget for MIP: 9.600000000000001]
+
+refine the bounds for layer  /15
+maximum relu layer improved by MIP so far 0
+refine the bounds for layer  /17
+current relu layer: /17, idx: 1
+timeout for this layer is 5.0
+Removed 0 unstable neurons in MIP based on the coefficient matrix.
+PGD done for relu layer 1
+Solving MIP for lay/input-3_35,[-5.132075309753418,2.005136013031006]=>[-3.8005739448721445,0.9470548480262634] (9,-1; 9,-1), time: 10.0086s, #vars: 1529, #constrs: 921, improved: True
+Solving MIP for lay/input-3_102,[-5.847286701202393,3.596052646636963]=>[-4.025928782751549,2.2364267827724937] (9,-1; 9,-1), time: 10.0168s, #vars: 1529, #constrs: 921, improved: True
+MIP improved 2 nodes out of 114 unstable nodes for layer /17, time 11.7933
+MIP got 2 timeout nodes out of 114 nodes for layer /17
+maximum relu layer improved by MIP so far 1
+Refine time 12.0536 exceeds the limit 9.600000000000001, stop refining.
+MIP finished with 12.053566455841064s
+Run final alpha-CROWN after MIP solving on layer 5 and relu idx 2
+0 /input torch.Size([1, 256])
+1 /input-3 torch.Size([1, 128])
+best_l after optimization: -92.05329132080078
+alpha/beta optimization time: 5.519961357116699
+alpha-CROWN with intermediate bounds improved by MIP: tensor([[ -5.25318146,  -9.93696117, -15.39886475,  -7.73432636, -12.06006908,
+          -6.54584885, -11.51174545, -13.16531181, -10.44698524]],
+       device='cuda:0') None
+torch.Size([1, 9])
+refined global lb: tensor([[ -5.25318146],
+        [ -9.93696117],
+        [-15.39886475],
+        [ -7.73432636],
+        [-12.06006908],
+        [ -6.54584885],
+        [-11.51174545],
+        [-13.16531181],
+        [-10.44698524]], device='cuda:0') min: tensor(-15.39886475, device='cuda:0')
+0 / 9 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-5.253181457519531], [-9.93696117401123], [-15.39886474609375], [-7.734326362609863], [-12.06006908416748], [-6.545848846435547], [-11.51174545288086], [-13.165311813354492], [-10.446985244750977]]
+###### Verifying property Instance 7 ######
+Batch size: 9
+First 10 spec matrices
+C: tensor([[[-1.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1., -1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0., -1.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0., -1.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0., -1.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0., -1.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0.,  0., -1.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0.,  0.,  0., -1.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0., -1.]]], device='cuda:0')
+RHS: tensor([[0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.]], device='cuda:0')
+OR spec sizes: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0', dtype=torch.int32)
+Remaining timeout: -9.49887228012085
+Model prediction is: tensor([-8.20110512,  6.72890472, -2.85314655, -0.50641757, -2.77623200,
+        -5.07252026, -6.77379894,  0.20286198,  0.86953735, -4.04782248],
+       device='cuda:0')
+Activation BaB batch 1/1 
+build_with_refined_bounds batch [1/1]
+Optimizable variables initialized.
+all alpha initialized
+directly get lb and ub from refined bounds
+c shape: torch.Size([9, 1, 10])
+lA shapes: [torch.Size([9, 1, 256]), torch.Size([9, 1, 128])]
+torch.Size([9, 1])
+(alpha-)CROWN with fixed intermediate bounds: tensor([[ -5.25318146],
+        [ -9.93696117],
+        [-15.39886475],
+        [ -7.73432636],
+        [-12.06006908],
+        [ -6.54584885],
+        [-11.51174545],
+        [-13.16531181],
+        [-10.44698524]], device='cuda:0') tensor([[inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf]], device='cuda:0')
+Intermediate layers: /input,/input-3
+Keeping alphas for these layers: ['/18']
+Node /15 input 0: size torch.Size([256]) unstable 179
+Node /17 input 0: size torch.Size([128]) unstable 114
+-----------------
+# of unstable neurons: 293
+-----------------
+
+BaB round 1
+batch: 9
+splitting decisions: 
+split level 0: [/input-3, 102] [/input, 71] [/input, 160] [/input-3, 36] [/input-3, 36] [/input-3, 105] [/input-3, 118] [/input-3, 80] [/input-3, 36] 
+best_l after optimization: -171.14056396484375
+beta sum per layer: [2.0813136100769043, 4.319770812988281]
+alpha/beta optimization time: 0.8035542964935303
+pruning_in_iteration open status: False
+ratio of positive domain = 0 / 18 = 0.0
+pruning-in-iteration extra time: 0.0009882450103759766
+torch.Size([18, 1])
+Time: prepare 0.0049    bound 0.8058    transfer 0.0034    finalize 0.0050    func 0.8192    
+Accumulated time: func 0.8192    prepare 0.0106    bound 0.8058    transfer 0.0034    finalize 0.0050    
+max lb tensor(-4.65029716) min lb tensor(-14.91713905)
+Number of Verified Splits: 0 of 18
+Current worst splitting domains lb-rhs (depth):
+-14.91714 (1), -14.37565 (1), -12.98870 (1), -11.52902 (1), -11.36996 (1), -11.15137 (1), -11.04103 (1), -10.67187 (1), -10.14850 (1), -9.63917 (1), -9.10709 (1), -9.01195 (1), -7.33412 (1), -7.03802 (1), -6.29323 (1), -4.99280 (1), -4.88063 (1), -4.65030 (1), 
+Length of domains: 18
+Current (lb-rhs): -14.917139053344727
+18 domains visited
+Time: pickout 0.0017    decision 0.0427    set_bounds 0.0052    solve 0.8199    add 0.0058    
+Accumulated time: pickout 0.0017    decision 0.0427    set_bounds 0.0052    solve 0.8199    add 0.0058    
+Time out!!!!!!!!
+Result: unknown in 22.4135 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 8, vnnlib ID: 38 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.005640 seconds
+Disabling Clip-and-Verify because it does not support bab-refine!
+Model: BoundedModule(
+  (/0): BoundInput(name=/0, inputs=[], perturbed=True)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/11): BoundParams(name=/11, inputs=[], perturbed=False)
+  (/12): BoundParams(name=/12, inputs=[], perturbed=False)
+  (/13): BoundFlatten(name=/13, inputs=[/0], perturbed=True)
+  (/input): BoundLinear(name=/input, inputs=[/13, /7, /8], perturbed=True)
+  (/15): BoundRelu(name=/15, inputs=[/input], perturbed=True)
+  (/input-3): BoundLinear(name=/input-3, inputs=[/15, /9, /10], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+  (/18): BoundLinear(name=/18, inputs=[/17, /11, /12], perturbed=True)
+)
+Original output in the first batch: tensor([[ -0.45768854,  -1.09846389,   5.66242027,   3.88414216, -10.38816738,
+          -1.34743130,  -5.21835852,  -4.13460064,   0.27716210,  -6.83354187]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/15, inputs=[/input], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+build batch [1/1]
+layer /15 using sparse-features alpha with shape [160]; unstable size 160; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 105, 1, 160] with unstable size 104 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 160] with unstable size None total_size 9 output_shape 9
+layer /17 using sparse-features alpha with shape [104]; unstable size 104; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 104] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+initial CROWN bounds (first 10 items): [-11.784924507141113, -9.210981369018555, -17.35198974609375, -4.510400772094727, -18.220481872558594, -10.229697227478027, -5.585783004760742, -13.991616249084473, -11.875225067138672]
+prune_after_crown optimization in use
+  original spec size = torch.Size([1, 9])
+  pruned spec size = torch.Size([1, 9])
+Using alpha-CROWN to initialize bounds.
+best_l after optimization: -88.52095031738281
+alpha/beta optimization time: 0.856156587600708
+initial alpha-crown bounds (first 10 items): [-9.978079795837402, -8.352046966552734, -16.251056671142578, -3.0538625717163086, -16.398361206054688, -8.249451637268066, -4.410469055175781, -12.207481384277344, -9.620138168334961]
+Global lower bound: -16.398361206054688
+torch.Size([1, 9])
+0 / 9 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-9.978079795837402], [-8.352046966552734], [-16.251056671142578], [-3.0538625717163086], [-16.398361206054688], [-8.249451637268066], [-4.410469055175781], [-12.207481384277344], [-9.620138168334961]]
+Start solving intermediate bounds with MIP...
+layer /15 using sparse-features alpha with shape [160]; unstable size 160; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 105, 1, 160] with unstable size 104 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 160] with unstable size None total_size 9 output_shape 9
+layer /17 using sparse-features alpha with shape [104]; unstable size 104; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 104] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+mip_multi_proc: 2, mip_threads: 1,total threads used: 2, mip_perneuron_refine_timeout: 5.0
+[total time budget for MIP: 9.600000000000001]
+
+refine the bounds for layer  /15
+maximum relu layer improved by MIP so far 0
+refine the bounds for layer  /17
+current relu layer: /17, idx: 1
+timeout for this layer is 5.0
+Removed 0 unstable neurons in MIP based on the coefficient matrix.
+PGD done for relu layer 1
+Solving MIP for lay/input-3_102,[-6.994984149932861,2.3443102836608887]=>[-5.014119083078342,0.8670418204495939] (9,-1; 9,-1), time: 10.0068s, #vars: 1491, #constrs: 864, improved: True
+Solving MIP for lay/input-3_71,[-2.6601738929748535,3.9307353496551514]=>[-1.4319623052604955,2.71264103697421] (9,-1; 9,-1), time: 10.0068s, #vars: 1491, #constrs: 864, improved: True
+MIP improved 2 nodes out of 100 unstable nodes for layer /17, time 11.3672
+MIP got 2 timeout nodes out of 100 nodes for layer /17
+maximum relu layer improved by MIP so far 1
+Refine time 11.6535 exceeds the limit 9.600000000000001, stop refining.
+MIP finished with 11.65352725982666s
+Run final alpha-CROWN after MIP solving on layer 5 and relu idx 2
+0 /input torch.Size([1, 256])
+1 /input-3 torch.Size([1, 128])
+best_l after optimization: -85.38380432128906
+alpha/beta optimization time: 4.0665295124053955
+alpha-CROWN with intermediate bounds improved by MIP: tensor([[ -9.54651070,  -8.09588814, -16.04239273,  -2.80077553, -16.04777145,
+          -7.44409657,  -4.31777382, -11.94263840,  -9.14595604]],
+       device='cuda:0') None
+torch.Size([1, 9])
+refined global lb: tensor([[ -9.54651070],
+        [ -8.09588814],
+        [-16.04239273],
+        [ -2.80077553],
+        [-16.04777145],
+        [ -7.44409657],
+        [ -4.31777382],
+        [-11.94263840],
+        [ -9.14595604]], device='cuda:0') min: tensor(-16.04777145, device='cuda:0')
+0 / 9 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-9.546510696411133], [-8.095888137817383], [-16.04239273071289], [-2.8007755279541016], [-16.047771453857422], [-7.444096565246582], [-4.317773818969727], [-11.942638397216797], [-9.145956039428711]]
+###### Verifying property Instance 8 ######
+Batch size: 9
+First 10 spec matrices
+C: tensor([[[-1.,  0.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0., -1.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  1., -1.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  1.,  0., -1.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  1.,  0.,  0., -1.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  1.,  0.,  0.,  0., -1.,  0.,  0.,  0.]],
+
+        [[ 0.,  0.,  1.,  0.,  0.,  0.,  0., -1.,  0.,  0.]],
+
+        [[ 0.,  0.,  1.,  0.,  0.,  0.,  0.,  0., -1.,  0.]],
+
+        [[ 0.,  0.,  1.,  0.,  0.,  0.,  0.,  0.,  0., -1.]]], device='cuda:0')
+RHS: tensor([[0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.]], device='cuda:0')
+OR spec sizes: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0', dtype=torch.int32)
+Remaining timeout: -5.431833267211914
+Model prediction is: tensor([ -0.45768854,  -1.09846389,   5.66242027,   3.88414216, -10.38816738,
+         -1.34743130,  -5.21835852,  -4.13460064,   0.27716210,  -6.83354187],
+       device='cuda:0')
+Activation BaB batch 1/1 
+build_with_refined_bounds batch [1/1]
+Optimizable variables initialized.
+all alpha initialized
+directly get lb and ub from refined bounds
+c shape: torch.Size([9, 1, 10])
+lA shapes: [torch.Size([9, 1, 256]), torch.Size([9, 1, 128])]
+torch.Size([9, 1])
+(alpha-)CROWN with fixed intermediate bounds: tensor([[ -9.54651070],
+        [ -8.09588814],
+        [-16.04239273],
+        [ -2.80077553],
+        [-16.04777145],
+        [ -7.44409657],
+        [ -4.31777382],
+        [-11.94263840],
+        [ -9.14595604]], device='cuda:0') tensor([[inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf]], device='cuda:0')
+Intermediate layers: /input,/input-3
+Keeping alphas for these layers: ['/18']
+Node /15 input 0: size torch.Size([256]) unstable 160
+Node /17 input 0: size torch.Size([128]) unstable 100
+-----------------
+# of unstable neurons: 260
+-----------------
+
+BaB round 1
+batch: 9
+splitting decisions: 
+split level 0: [/input-3, 42] [/input, 190] [/input-3, 21] [/input, 190] [/input, 190] [/input, 190] [/input-3, 42] [/input, 190] [/input, 190] 
+best_l after optimization: -157.75320434570312
+beta sum per layer: [2.908191680908203, 2.099637985229492]
+alpha/beta optimization time: 0.7232005596160889
+pruning_in_iteration open status: False
+ratio of positive domain = 0 / 18 = 0.0
+pruning-in-iteration extra time: 0.0004634857177734375
+torch.Size([18, 1])
+Time: prepare 0.0023    bound 0.7244    transfer 0.0010    finalize 0.0057    func 0.7334    
+Accumulated time: func 0.7334    prepare 0.0076    bound 0.7244    transfer 0.0010    finalize 0.0057    
+max lb tensor(-2.29762936) min lb tensor(-15.83714294)
+Number of Verified Splits: 0 of 18
+Current worst splitting domains lb-rhs (depth):
+-15.83714 (1), -15.37737 (1), -14.89211 (1), -13.58714 (1), -11.50121 (1), -11.39572 (1), -9.00542 (1), -8.96702 (1), -8.73557 (1), -8.23891 (1), -7.72254 (1), -7.54042 (1), -7.01981 (1), -6.70346 (1), -3.85754 (1), -2.65800 (1), -2.41620 (1), -2.29763 (1), 
+Length of domains: 18
+Current (lb-rhs): -15.837142944335938
+18 domains visited
+Time: pickout 0.0018    decision 0.0388    set_bounds 0.0015    solve 0.7342    add 0.0064    
+Accumulated time: pickout 0.0018    decision 0.0388    set_bounds 0.0015    solve 0.7342    add 0.0064    
+Time out!!!!!!!!
+Result: unknown in 18.2614 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 9, vnnlib ID: 39 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.008317 seconds
+Disabling Clip-and-Verify because it does not support bab-refine!
+Model: BoundedModule(
+  (/0): BoundInput(name=/0, inputs=[], perturbed=True)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/11): BoundParams(name=/11, inputs=[], perturbed=False)
+  (/12): BoundParams(name=/12, inputs=[], perturbed=False)
+  (/13): BoundFlatten(name=/13, inputs=[/0], perturbed=True)
+  (/input): BoundLinear(name=/input, inputs=[/13, /7, /8], perturbed=True)
+  (/15): BoundRelu(name=/15, inputs=[/input], perturbed=True)
+  (/input-3): BoundLinear(name=/input-3, inputs=[/15, /9, /10], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+  (/18): BoundLinear(name=/18, inputs=[/17, /11, /12], perturbed=True)
+)
+Original output in the first batch: tensor([[-5.69793558,  7.93229151, -3.12515235, -1.17311060, -1.97339702,
+         -7.86727715, -8.23106384, -0.20369469, -1.32850707, -3.82146764]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/15, inputs=[/input], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-3], perturbed=True)
+build batch [1/1]
+layer /15 using sparse-features alpha with shape [165]; unstable size 165; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 107, 1, 165] with unstable size 106 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 165] with unstable size None total_size 9 output_shape 9
+layer /17 using sparse-features alpha with shape [106]; unstable size 106; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 106] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+initial CROWN bounds (first 10 items): [-6.988765716552734, -10.732893943786621, -15.943347930908203, -8.247560501098633, -10.489432334899902, -4.735642433166504, -11.405860900878906, -12.447184562683105, -11.514811515808105]
+prune_after_crown optimization in use
+  original spec size = torch.Size([1, 9])
+  pruned spec size = torch.Size([1, 9])
+Using alpha-CROWN to initialize bounds.
+best_l after optimization: -75.25038146972656
+alpha/beta optimization time: 2.949601173400879
+initial alpha-crown bounds (first 10 items): [-5.3186492919921875, -8.209287643432617, -13.615934371948242, -6.5648088455200195, -8.887158393859863, -3.644458770751953, -9.655515670776367, -10.405723571777344, -8.94884204864502]
+Global lower bound: -13.615934371948242
+torch.Size([1, 9])
+0 / 9 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-5.3186492919921875], [-8.209287643432617], [-13.615934371948242], [-6.5648088455200195], [-8.887158393859863], [-3.644458770751953], [-9.655515670776367], [-10.405723571777344], [-8.94884204864502]]
+Start solving intermediate bounds with MIP...
+layer /15 using sparse-features alpha with shape [165]; unstable size 165; total size 256 ([1, 256])
+layer /15 start_node /input-3 using sparse-spec alpha [2, 107, 1, 165] with unstable size 106 total_size 128 output_shape torch.Size([128])
+layer /15 start_node /18 using full alpha [2, 9, 1, 165] with unstable size None total_size 9 output_shape 9
+layer /17 using sparse-features alpha with shape [106]; unstable size 106; total size 128 ([1, 128])
+layer /17 start_node /18 using full alpha [2, 9, 1, 106] with unstable size None total_size 9 output_shape 9
+Optimizable variables initialized.
+mip_multi_proc: 2, mip_threads: 1,total threads used: 2, mip_perneuron_refine_timeout: 5.0
+[total time budget for MIP: 9.600000000000001]
+
+refine the bounds for layer  /15
+maximum relu layer improved by MIP so far 0
+refine the bounds for layer  /17
+current relu layer: /17, idx: 1
+timeout for this layer is 5.0
+Removed 0 unstable neurons in MIP based on the coefficient matrix.
+PGD done for relu layer 1
+Solving MIP for lay/input-3_73,[-5.00244665145874,2.7866616249084473]=>[-3.407345725962087,1.494642337034725] (2,-1; 9,-1), time: 8.1242s, #vars: 1501, #constrs: 879, improved: True
+Solving MIP for lay/input-3_36,[-5.065134048461914,3.2045490741729736]=>[-3.5047351928964185,1.678156772927228] (2,-1; 2,-1), time: 9.6144s, #vars: 1501, #constrs: 879, improved: True
+Solving MIP for lay/input-3_80,[-2.246939182281494,3.881711483001709]=>[-1.393119358778405,2.605736617039828] (2,-1; 9,-1), time: 7.7915s, #vars: 1501, #constrs: 879, improved: True
+MIP improved 3 nodes out of 106 unstable nodes for layer /17, time 17.3150
+MIP got 0 timeout nodes out of 106 nodes for layer /17
+maximum relu layer improved by MIP so far 1
+Refine time 17.5991 exceeds the limit 9.600000000000001, stop refining.
+MIP finished with 17.599140644073486s
+Run final alpha-CROWN after MIP solving on layer 5 and relu idx 2
+0 /input torch.Size([1, 256])
+1 /input-3 torch.Size([1, 128])
+best_l after optimization: -71.87977600097656
+alpha/beta optimization time: 3.7820451259613037
+alpha-CROWN with intermediate bounds improved by MIP: tensor([[ -5.13573933,  -7.85156298, -13.40229702,  -5.80502605,  -8.36228943,
+          -3.35870647,  -9.42438889, -10.18316555,  -8.35659599]],
+       device='cuda:0') None
+torch.Size([1, 9])
+refined global lb: tensor([[ -5.13573933],
+        [ -7.85156298],
+        [-13.40229702],
+        [ -5.80502605],
+        [ -8.36228943],
+        [ -3.35870647],
+        [ -9.42438889],
+        [-10.18316555],
+        [ -8.35659599]], device='cuda:0') min: tensor(-13.40229702, device='cuda:0')
+0 / 9 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-5.135739326477051], [-7.851562976837158], [-13.402297019958496], [-5.805026054382324], [-8.362289428710938], [-3.358706474304199], [-9.424388885498047], [-10.183165550231934], [-8.356595993041992]]
+###### Verifying property Instance 9 ######
+Batch size: 9
+First 10 spec matrices
+C: tensor([[[-1.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1., -1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0., -1.,  0.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0., -1.,  0.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0., -1.,  0.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0., -1.,  0.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0.,  0., -1.,  0.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0.,  0.,  0., -1.,  0.]],
+
+        [[ 0.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0., -1.]]], device='cuda:0')
+RHS: tensor([[0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.],
+        [0.]], device='cuda:0')
+OR spec sizes: tensor([1, 1, 1, 1, 1, 1, 1, 1, 1], device='cuda:0', dtype=torch.int32)
+Remaining timeout: -13.198282957077026
+Model prediction is: tensor([-5.69793558,  7.93229151, -3.12515235, -1.17311060, -1.97339702,
+        -7.86727715, -8.23106384, -0.20369469, -1.32850707, -3.82146764],
+       device='cuda:0')
+Activation BaB batch 1/1 
+build_with_refined_bounds batch [1/1]
+Optimizable variables initialized.
+all alpha initialized
+directly get lb and ub from refined bounds
+c shape: torch.Size([9, 1, 10])
+lA shapes: [torch.Size([9, 1, 256]), torch.Size([9, 1, 128])]
+torch.Size([9, 1])
+(alpha-)CROWN with fixed intermediate bounds: tensor([[ -5.13573933],
+        [ -7.85156298],
+        [-13.40229702],
+        [ -5.80502605],
+        [ -8.36228943],
+        [ -3.35870647],
+        [ -9.42438889],
+        [-10.18316555],
+        [ -8.35659599]], device='cuda:0') tensor([[inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf],
+        [inf]], device='cuda:0')
+Intermediate layers: /input,/input-3
+Keeping alphas for these layers: ['/18']
+Node /15 input 0: size torch.Size([256]) unstable 165
+Node /17 input 0: size torch.Size([128]) unstable 106
+-----------------
+# of unstable neurons: 271
+-----------------
+
+BaB round 1
+batch: 9
+splitting decisions: 
+split level 0: [/input-3, 102] [/input, 71] [/input, 160] [/input-3, 118] [/input-3, 35] [/input-3, 102] [/input-3, 118] [/input-3, 27] [/input-3, 27] 
+best_l after optimization: -130.55003356933594
+beta sum per layer: [1.2594786882400513, 4.867481708526611]
+alpha/beta optimization time: 0.5997335910797119
+pruning_in_iteration open status: False
+ratio of positive domain = 0 / 18 = 0.0
+pruning-in-iteration extra time: 0.0010001659393310547
+torch.Size([18, 1])
+Time: prepare 0.0022    bound 0.6015    transfer 0.0014    finalize 0.0045    func 0.6097    
+Accumulated time: func 0.6097    prepare 0.0073    bound 0.6015    transfer 0.0014    finalize 0.0045    
+max lb tensor(-2.67363644) min lb tensor(-12.93074894)
+Number of Verified Splits: 0 of 18
+Current worst splitting domains lb-rhs (depth):
+-12.93075 (1), -11.67548 (1), -9.92601 (1), -9.56193 (1), -9.06617 (1), -8.97639 (1), -8.10406 (1), -8.03774 (1), -7.46091 (1), -7.40793 (1), -6.48682 (1), -6.41887 (1), -5.52814 (1), -4.82772 (1), -4.73091 (1), -4.06239 (1), -2.67418 (1), -2.67364 (1), 
+Length of domains: 18
+Current (lb-rhs): -12.93074893951416
+18 domains visited
+Time: pickout 0.0016    decision 0.0354    set_bounds 0.0021    solve 0.6104    add 0.0063    
+Accumulated time: pickout 0.0016    decision 0.0354    set_bounds 0.0021    solve 0.6104    add 0.0063    
+Time out!!!!!!!!
+Result: unknown in 25.8965 seconds
+############# Summary #############
+Final verified acc: 0.0% (total 10 examples)
+Problem instances count: 10 , total verified (safe/unsat): 0 , total falsified (unsafe/sat): 0 , timeout: 10
+mean time for ALL instances (total 10):26.75228397674282, max time: 36.32589149475098
+unknown (total 10), index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

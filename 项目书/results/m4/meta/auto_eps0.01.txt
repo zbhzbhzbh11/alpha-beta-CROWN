@@ -1,0 +1,9 @@
+run_id=auto_eps0.01
+config=/home/han/alpha-beta-CROWN/complete_verifier/exp_configs/course/m4/mnist_m4_auto_eps0.01.yaml
+timestamp=2026-04-03 16:38:52
+hostname=LAPTOP-RGROMBPB
+python=Python 3.10.19
+gpu=NVIDIA GeForce RTX 4060 Laptop GPU
+threads: OMP=4, MKL=4, OPENBLAS=4
+wall_time_sec=49.01
+max_rss_kb=1536744

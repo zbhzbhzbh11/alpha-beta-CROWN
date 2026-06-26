@@ -1,0 +1,5 @@
+run_id=kfsb_eps0.03_timeout30
+config=exp_configs/course/m5_pgd/mnist_m5pgd_kfsb_eps0.03.yaml
+timeout_budget=30 (YAML default, no override)
+timestamp=2026-05-04 19:02:27
+wall_time_sec=652.06

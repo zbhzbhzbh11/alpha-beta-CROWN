@@ -1,0 +1,4 @@
+############# Summary #############
+Final verified acc: 68.0% (total 100 examples)
+Problem instances count: 100 , total verified (safe/unsat): 68 , total falsified (unsafe/sat): 0 , timeout: 32
+mean time for ALL instances (total 100):6.660579152943186, max time: 16.191529989242554

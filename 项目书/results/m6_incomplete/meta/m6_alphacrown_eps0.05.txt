@@ -1,0 +1,3 @@
+run_id=m6_alphacrown_eps0.05
+timestamp=2026-05-04 19:43:23
+wall_time_sec=283.15

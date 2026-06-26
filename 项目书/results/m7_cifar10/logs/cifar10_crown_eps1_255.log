@@ -1,0 +1,1258 @@
+INFO     20:16:31     [tensor_storage.py:70] Hugepage enabled for branch-and-bound domains.
+Configurations:
+
+general:
+  device: cuda
+  seed: 100
+  conv_mode: patches
+  deterministic: false
+  double_fp: false
+  loss_reduction_func: sum
+  sparse_alpha: true
+  sparse_interm: true
+  save_adv_example: false
+  verify_onnxruntime_output: false
+  eval_adv_example: false
+  onnx_adv_example: false
+  show_adv_example: false
+  precompile_jit: false
+  reset_seed_after_precompile: false
+  prepare_only: false
+  complete_verifier: skip
+  enable_incomplete_verification: true
+  csv_name: null
+  results_file: out.txt
+  root_path: ''
+  deterministic_opt: false
+  graph_optimizer: 'Customized("custom_graph_optimizer", "default_optimizer")'
+  buffer_has_batchdim: false
+  save_output: false
+  output_file: out.pkl
+  return_optimized_model: false
+  store_all_specs_on_cpu: false
+  adhoc_tuning: null
+model:
+  name: cifar_marabou_small
+  path: models/marabou_cifar10/cifar_marabou_small.pth
+  onnx_path: null
+  onnx_path_prefix: ''
+  cache_onnx_conversion: false
+  debug_onnx: false
+  onnx_quirks: null
+  input_shape: null
+  onnx_loader: default_onnx_and_vnnlib_loader
+  onnx_optimization_flags: []
+  onnx_vnnlib_joint_optimization_flags: none
+  check_optimized: false
+  flatten_final_output: false
+  optimize_graph: null
+  with_jacobian: false
+  bound_opts: null
+data:
+  start: 0
+  end: 20
+  select_instance: null
+  num_outputs: 10
+  mean: 0.0
+  std: 1.0
+  pkl_path: null
+  dataset: CIFAR
+  data_filter_path: null
+  data_idx_file: null
+specification:
+  type: lp
+  robustness_type: verified-acc
+  norm: .inf
+  epsilon: 0.00392156863
+  epsilon_min: 0.0
+  vnnlib_path: null
+  vnnlib_path_prefix: ''
+  shrink_eps: null
+  rhs_offset: null
+solver:
+  batch_size: 1024
+  auto_enlarge_batch_size: true
+  batched_crown_auto_enlarge_max_vram_ratio: 0.9
+  min_batch_size_ratio: 0.1
+  use_float64_in_last_iteration: false
+  early_stop_patience: 10
+  start_save_best: 0.5
+  bound_prop_method: crown
+  init_bound_prop_method: same
+  prune_after_crown: true
+  optimize_disjuncts_separately: false
+  build_batch_size: 1000000
+  skip_with_refined_bound: true
+  forward_before_compute_bounds: false
+  crown:
+    batch_size: 1000000000
+    max_crown_size: 1000000000
+    activation_bound_option: adaptive
+    compare_crown_with_ibp: false
+  alpha-crown:
+    alpha: true
+    lr_alpha: 0.1
+    iteration: 100
+    share_alphas: false
+    lr_decay: 0.98
+    full_conv_alpha: true
+    max_coeff_mul: .inf
+    matmul_share_alphas: false
+    disable_optimization: []
+    max_time: 1.0
+    alpha_dtype: float16
+    input_split_alpha_iteration: 5
+    input_split_lr_alpha: 0.05
+  invprop:
+    apply_output_constraints_to: []
+    tighten_input_bounds: false
+    best_of_oc_and_no_oc: false
+    directly_optimize: []
+    oc_lr: 0.1
+    share_gammas: false
+  beta-crown:
+    lr_alpha: 0.01
+    lr_beta: 0.05
+    lr_decay: 0.98
+    optimizer: adam
+    iteration: 50
+    beta: true
+    beta_warmup: true
+    enable_opt_interm_bounds: false
+    all_node_split_LP: false
+  forward:
+    refine: false
+    max_dim: 10000
+    reset_threshold: 1.0
+  mip:
+    unstable_neuron_threshold: 0
+    parallel_solvers: null
+    solver_threads: 1
+    refine_neuron_timeout: 15
+    refine_neuron_time_percentage: 0.8
+    early_stop: true
+    adv_warmup: true
+    mip_solver: gurobi
+    skip_unsafe: false
+    topk_filter: 1.0
+    sliding_window: -1
+    extra_constraint: false
+    refine_neuron_timeout_increasement: 0
+    timeout_neuron_percentage: 0.3
+    remaining_timeout_threshold: 1
+    remove_unstable_neurons: false
+    formulation: mip
+    output_cut: false
+bab:
+  max_domains: .inf
+  decision_thresh: 0
+  timeout: 120
+  timeout_scale: 1
+  max_iterations: -1
+  override_timeout: null
+  get_upper_bound: false
+  pruning_in_iteration: true
+  pruning_in_iteration_ratio: 0.2
+  sort_targets: false
+  batched_domain_list: true
+  optimized_interm: ''
+  interm_transfer: true
+  recompute_interm: false
+  sort_domain_interval: -1
+  vanilla_crown: false
+  tree_traversal: depth_first
+  hugetensor_allocator: true
+  cut:
+    enabled: false
+    cuts_path: null
+    bab_cut: false
+    lp_cut: false
+    lr: 0.01
+    lr_decay: 1.0
+    iteration: 100
+    bab_iteration: -1
+    early_stop_patience: -1
+    lr_beta: 0.02
+    number_cuts: 50
+    topk_cuts_in_filter: 1000
+    batch_size_primal: 100
+    max_num: 1000000000
+    patches_cut: false
+    cplex_cuts: false
+    cplex_cuts_wait: 0
+    cplex_cuts_revpickup: true
+    cut_reference_bounds: true
+    fix_intermediate_bounds: false
+    manual_cuts: null
+    biccos:
+      enabled: false
+      auto_param: true
+      constraint_strengthening: true
+      drop_ratio: 0.5
+      max_infer_iter: 20
+      max_domain: 10000.0
+      heuristic: neuron_influence_score
+      save_cuts: false
+      multi_tree_branching:
+        enabled: false
+        restore_best_tree: true
+        keep_n_best_domains: 50
+        target_batch_size: 200
+        iterations: 3
+  clip_n_verify:
+    rearrange_constraints: false
+    alpha_crown: false
+    prune: false
+    final_layer: false
+    clip_input_domain:
+      enabled: false
+      clip_type: relaxed
+      clip_neuron_selection_type: ratio
+      clip_neuron_selection_value: -1.0
+      clip_iterations: 1
+      clip_calculate_volume_metrics: false
+    clip_interm_domain:
+      enabled: false
+      with_input: false
+      clip_in_alpha_crown: false
+      topk_objective: 20
+  branching:
+    method: kfsb
+    candidates: 3
+    reduceop: min
+    enable_intermediate_bound_opt: false
+    branching_input_and_activation: false
+    branching_input_and_activation_order: [input, relu]
+    branching_input_iterations: 30
+    branching_relu_iterations: 50
+    nonlinear_split:
+      method: bbps
+      disable: false
+      branching_point_method: uniform
+      num_branches: 2
+      filter: false
+      filter_beta: false
+      filter_clamp: false
+      filter_batch_size: 10000
+      filter_iterations: 25
+      relu_only: false
+      loose_tanh_threshold: null
+      branching_point:
+        db_path: branching_points.pt
+        num_iterations: 1000
+        batch_size: 1000000
+        range_l: -5.0
+        range_u: 5.0
+        log_interval: 100
+        step_size_1d: 0.01
+        step_size: 0.2
+    input_split:
+      split_hint: null
+      enable: false
+      reorder_bab: false
+      input_dim_threshold: 20
+      adv_check: 0
+      split_partitions: 2
+      sb_margin_weight: 1.0
+      sb_sum: false
+      sb_primary_spec: null
+      bf_backup_thresh: -1
+      bf_rhs_offset: 0
+      bf_iters: 1000000000.0
+      bf_batch_size: 100000
+      bf_zero_crossing_score: false
+      touch_zero_score: 0
+      ibp_enhancement: true
+      compare_with_old_bounds: true
+      update_rhs_with_attack: false
+      sb_coeff_thresh: 0.001
+      sort_index: null
+      sort_descending: true
+      show_progress: false
+      presplit_domains: null
+      skip_getting_worst_domain: false
+  attack:
+    enabled: false
+    beam_candidates: 8
+    beam_depth: 7
+    max_dive_fix_ratio: 0.8
+    min_local_free_ratio: 0.2
+    mip_start_iteration: 5
+    mip_timeout: 30.0
+    adv_pool_threshold: null
+    refined_mip_attacker: false
+    refined_batch_size: null
+attack:
+  general_attack: true
+  pgd_order: skip
+  pgd_steps: 100
+  pgd_restarts: 30
+  pgd_batch_size: 100000000
+  pgd_early_stop: true
+  pgd_lr_decay: 0.99
+  pgd_alpha: auto
+  pgd_alpha_scale: false
+  pgd_loss_mode: null
+  pgd_restart_when_stuck: false
+  enable_mip_attack: false
+  adv_saver: default_adv_saver
+  adv_verifier: default_adv_verifier
+  early_stop_condition: default_early_stop_condition
+  adv_example_finalizer: default_adv_example_finalizer
+  pgd_loss: default_pgd_loss
+  cex_path: ./test_cex.txt
+  attack_mode: PGD
+  attack_tolerance: 0.0
+  attack_func: attack_with_general_specs
+  gama_lambda: 10.0
+  gama_decay: 0.9
+  input_split:
+    pgd_steps: 100
+    pgd_restarts: 30
+    pgd_alpha: auto
+  input_split_check_adv:
+    enabled: auto
+    pgd_steps: 5
+    pgd_restarts: 5
+    pgd_alpha: auto
+    max_num_domains: 10
+debug:
+  view_model: false
+  lp_test: null
+  rescale_vnnlib_ptb: null
+  test_optimized_bounds: false
+  test_optimized_bounds_after_n_iterations: 0
+  print_verbose_decisions: false
+  biccos_mip_sanity_check: false
+  sanity_check: 0
+  z_split_enabled: false
+  save_minimal_config: null
+  save_minimal_config_omit_keys: []
+/home/han/alpha-beta-CROWN/complete_verifier/load_model.py:341: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  sd = torch.load(expand_path(arguments.Config["model"]["path"]),
+
+Experiments at Mon May  4 20:16:31 2026 on LAPTOP-RGROMBPB
+Sequential(
+  (0): Conv2d(3, 8, kernel_size=(4, 4), stride=(2, 2))
+  (1): ReLU()
+  (2): Conv2d(8, 16, kernel_size=(4, 4), stride=(2, 2))
+  (3): ReLU()
+  (4): Flatten(start_dim=1, end_dim=-1)
+  (5): Linear(in_features=576, out_features=128, bias=True)
+  (6): ReLU()
+  (7): Linear(in_features=128, out_features=64, bias=True)
+  (8): ReLU()
+  (9): Linear(in_features=64, out_features=10, bias=True)
+)
+Parameters:
+  0.weight: shape torch.Size([8, 3, 4, 4])
+  0.bias: shape torch.Size([8])
+  2.weight: shape torch.Size([16, 8, 4, 4])
+  2.bias: shape torch.Size([16])
+  5.weight: shape torch.Size([128, 576])
+  5.bias: shape torch.Size([128])
+  7.weight: shape torch.Size([64, 128])
+  7.bias: shape torch.Size([64])
+  9.weight: shape torch.Size([10, 64])
+  9.bias: shape torch.Size([10])
+Trying generic MNIST/CIFAR data loader.
+Files already downloaded and verified
+/home/han/alpha-beta-CROWN/complete_verifier/specifications.py:342: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:278.)
+  x_range_list = torch.Tensor(x_range_list).to(dtype=dtype, device=device).view(input_shape + [2])
+Internal results will be saved to out.txt.
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 0, vnnlib ID: 0 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.562189 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-1.92737579, -2.77405930, -0.62547624,  2.09529805, -1.31049156,
+          2.23329186, -0.43348008, -0.04873103, -1.37979186, -1.53567266]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [1.7599797248840332, 1.870269775390625, 0.859740674495697, 1.2349220514297485, -1.2597694396972656, 0.7718650102615356, -0.21227949857711792, 0.7935546636581421, 1.4443107843399048]
+Global lower bound: -1.2597694396972656
+torch.Size([1, 9])
+7 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 1, 2, 3, 5, 7, 8]
+Verified OR lbs (first 10 items): [[1.7599797248840332], [1.870269775390625], [0.859740674495697], [1.2349220514297485], [0.7718650102615356], [0.7935546636581421], [1.4443107843399048]]
+Unverified OR indices (first 10 items): [4, 6]
+Unverified OR lbs (first 10 items): [[-1.2597694396972656], [-0.21227949857711792]]
+Result: unknown in 2.0798 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 1, vnnlib ID: 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003838 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[ 3.32889462,  5.82874107, -2.86666560, -3.70354080, -4.72177458,
+         -5.79681301, -7.63900661, -6.62763834,  5.24139833,  2.39701438]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [-0.10194087028503418, -3.012054920196533, 5.8653483390808105, 6.847579002380371, 7.625466346740723, 8.708248138427734, 10.290628433227539, 8.729557037353516, -0.07894110679626465]
+Global lower bound: -3.012054920196533
+torch.Size([1, 9])
+6 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [2, 3, 4, 5, 6, 7]
+Verified OR lbs (first 10 items): [[5.8653483390808105], [6.847579002380371], [7.625466346740723], [8.708248138427734], [10.290628433227539], [8.729557037353516]]
+Unverified OR indices (first 10 items): [0, 1, 8]
+Unverified OR lbs (first 10 items): [[-0.10194087028503418], [-3.012054920196533], [-0.07894110679626465]]
+Result: unknown in 0.0999 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 2, vnnlib ID: 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003711 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[ 1.80267930,  1.33010900, -1.49636483, -1.91810036, -2.34985566,
+         -2.93555212, -3.99022937, -2.51078725,  3.18092823,  0.38321537]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [-1.6810743808746338, -4.2494964599609375, 1.1568574905395508, 0.485950231552124, 2.1543755531311035, 1.7319296598434448, 1.709540843963623, 0.7777106761932373, -3.7427289485931396]
+Global lower bound: -4.2494964599609375
+torch.Size([1, 9])
+6 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [2, 3, 4, 5, 6, 7]
+Verified OR lbs (first 10 items): [[1.1568574905395508], [0.485950231552124], [2.1543755531311035], [1.7319296598434448], [1.709540843963623], [0.7777106761932373]]
+Unverified OR indices (first 10 items): [0, 1, 8]
+Unverified OR lbs (first 10 items): [[-1.6810743808746338], [-4.2494964599609375], [-3.7427289485931396]]
+Result: unknown in 0.0737 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 3, vnnlib ID: 3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003516 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[ 2.22774982,  0.14108336, -0.29435030, -2.12003326, -1.42518914,
+         -3.38851976, -3.24397683, -3.20557618,  3.00932455, -0.39158520]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [0.4395747184753418, 1.2139265537261963, 2.371642827987671, 1.7891879081726074, 3.549295425415039, 3.623383045196533, 3.1384661197662354, -2.216015338897705, 0.8376198410987854]
+Global lower bound: -2.216015338897705
+torch.Size([1, 9])
+8 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 1, 2, 3, 4, 5, 6, 8]
+Verified OR lbs (first 10 items): [[0.4395747184753418], [1.2139265537261963], [2.371642827987671], [1.7891879081726074], [3.549295425415039], [3.623383045196533], [3.1384661197662354], [0.8376198410987854]]
+Unverified OR indices (first 10 items): [7]
+Unverified OR lbs (first 10 items): [[-2.216015338897705]]
+Result: unknown in 0.0684 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 4, vnnlib ID: 4 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003431 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-4.07141590, -4.87504816,  1.37464166,  1.46162677,  3.82874656,
+          0.89143348,  2.97824407, -0.68250030, -5.18414211, -5.00418663]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [2.235997200012207, 3.3297879695892334, -2.1836090087890625, -2.6937808990478516, -4.974057674407959, -2.322362184524536, -1.5826261043548584, 2.1952972412109375, 3.198157787322998]
+Global lower bound: -4.974057674407959
+torch.Size([1, 9])
+4 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 1, 7, 8]
+Verified OR lbs (first 10 items): [[2.235997200012207], [3.3297879695892334], [2.1952972412109375], [3.198157787322998]]
+Unverified OR indices (first 10 items): [2, 3, 4, 5, 6]
+Unverified OR lbs (first 10 items): [[-2.1836090087890625], [-2.6937808990478516], [-4.974057674407959], [-2.322362184524536], [-1.5826261043548584]]
+Result: unknown in 0.0735 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 5, vnnlib ID: 5 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.004257 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-1.83033156, -2.29530430,  0.07002634,  1.22669363,  0.00586165,
+          0.27316952,  2.22688222, -1.02965689, -2.82620764, -1.82027876]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [-4.839861869812012, -2.9679689407348633, -3.8990888595581055, -4.355677604675293, -3.0454607009887695, -4.330282688140869, -4.168309688568115, -3.6979877948760986, -3.48835825920105]
+Global lower bound: -4.839861869812012
+torch.Size([1, 9])
+0 / 9 OR specs are verified.
+Verified OR indices (first 10 items): []
+Verified OR lbs (first 10 items): []
+Unverified OR indices (first 10 items): [0, 1, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-4.839861869812012], [-2.9679689407348633], [-3.8990888595581055], [-4.355677604675293], [-3.0454607009887695], [-4.330282688140869], [-4.168309688568115], [-3.6979877948760986], [-3.48835825920105]]
+Result: unknown in 0.0804 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 6, vnnlib ID: 6 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003592 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-0.55005777,  1.83268833, -1.34672451,  0.48243737, -2.22114611,
+          0.17506020, -2.65680718, -0.75643516, -1.69486177,  2.02937412]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [0.30272841453552246, 0.2750887870788574, -1.7673816680908203, 1.0663957595825195, -1.7903985977172852, 1.606968879699707, -0.6714291572570801, 1.5882710218429565, -1.8339653015136719]
+Global lower bound: -1.8339653015136719
+torch.Size([1, 9])
+5 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 1, 3, 5, 7]
+Verified OR lbs (first 10 items): [[0.30272841453552246], [0.2750887870788574], [1.0663957595825195], [1.606968879699707], [1.5882710218429565]]
+Unverified OR indices (first 10 items): [2, 4, 6, 8]
+Unverified OR lbs (first 10 items): [[-1.7673816680908203], [-1.7903985977172852], [-0.6714291572570801], [-1.8339653015136719]]
+Result: unknown in 0.0727 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 7, vnnlib ID: 7 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.004444 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-1.79885232, -2.89412928,  1.53043759,  0.52827668,  1.25297582,
+         -1.12675893,  3.11303926, -2.25982022, -2.88301134, -2.01929283]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [-2.1715850830078125, 0.7845616340637207, -4.450850486755371, -2.006829261779785, -3.698883533477783, -1.5621460676193237, -1.4188423156738281, -1.4048042297363281, -0.7309041023254395]
+Global lower bound: -4.450850486755371
+torch.Size([1, 9])
+1 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [1]
+Verified OR lbs (first 10 items): [[0.7845616340637207]]
+Unverified OR indices (first 10 items): [0, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-2.1715850830078125], [-4.450850486755371], [-2.006829261779785], [-3.698883533477783], [-1.5621460676193237], [-1.4188423156738281], [-1.4048042297363281], [-0.7309041023254395]]
+Result: unknown in 0.0771 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 8, vnnlib ID: 8 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003829 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-1.80195355, -4.20551586,  1.10549557,  2.68741536, -0.02106195,
+          3.04679441, -0.36803877,  0.37309268, -3.94185686, -3.00180817]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [2.18345046043396, 5.066768646240234, -0.5250616073608398, 0.44019103050231934, -1.1389347314834595, 0.7450375556945801, 0.7750580310821533, 4.892781734466553, 4.1632256507873535]
+Global lower bound: -1.1389347314834595
+torch.Size([1, 9])
+7 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 1, 3, 5, 6, 7, 8]
+Verified OR lbs (first 10 items): [[2.18345046043396], [5.066768646240234], [0.44019103050231934], [0.7450375556945801], [0.7750580310821533], [4.892781734466553], [4.1632256507873535]]
+Unverified OR indices (first 10 items): [2, 4]
+Unverified OR lbs (first 10 items): [[-0.5250616073608398], [-1.1389347314834595]]
+Result: unknown in 0.0778 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 9, vnnlib ID: 9 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003672 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-0.76355946,  3.62702179, -1.82418132, -1.62325621, -2.57115221,
+         -2.63598776, -1.55568373, -3.21473813,  0.50621200,  1.59072757]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [2.4058680534362793, 3.4588277339935303, 3.1993722915649414, 4.074188232421875, 4.007184028625488, 3.460846424102783, 4.810060501098633, 1.076170563697815, 0.8320918679237366]
+Global lower bound: 0.8320918679237366
+torch.Size([1, 9])
+verified with init bound!
+Result: safe-incomplete in 0.0694 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 10, vnnlib ID: 10 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003716 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[ 1.20415986, -4.29579926,  0.53912085,  0.60737717,  0.63494897,
+          0.63274592, -1.57517362, -1.34774542, -0.03524967, -2.99021149]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [4.045375823974609, -0.7697656154632568, -1.447899341583252, -1.1215765476226807, -1.7536039352416992, 0.8590002059936523, 0.39896905422210693, -0.5105752944946289, 2.542668104171753]
+Global lower bound: -1.7536039352416992
+torch.Size([1, 9])
+4 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 5, 6, 8]
+Verified OR lbs (first 10 items): [[4.045375823974609], [0.8590002059936523], [0.39896905422210693], [2.542668104171753]]
+Unverified OR indices (first 10 items): [1, 2, 3, 4, 7]
+Unverified OR lbs (first 10 items): [[-0.7697656154632568], [-1.447899341583252], [-1.1215765476226807], [-1.7536039352416992], [-0.5105752944946289]]
+Result: unknown in 0.0796 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 11, vnnlib ID: 11 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.004655 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-1.61597753,  1.11541975, -2.45084524, -1.23933649, -2.30916691,
+         -1.87373555, -1.71634376, -2.27932239, -0.67824084,  3.73230267]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [3.5735507011413574, 0.4444406032562256, 4.585136890411377, 3.226287603378296, 4.467949390411377, 3.6165595054626465, 3.2992260456085205, 3.9167404174804688, 2.4910049438476562]
+Global lower bound: 0.4444406032562256
+torch.Size([1, 9])
+verified with init bound!
+Result: safe-incomplete in 0.0787 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 12, vnnlib ID: 12 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.004359 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-3.59435344, -3.27574062, -0.02125512,  1.66428638,  0.85419363,
+          2.07764721,  1.22576833,  0.13974136, -3.63086796, -3.25284958]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [0.1681373119354248, -1.0993021726608276, -2.5704421997070312, -2.1673505306243896, -3.4200611114501953, -5.135555744171143, -2.860105514526367, 0.5868395566940308, -0.20668673515319824]
+Global lower bound: -5.135555744171143
+torch.Size([1, 9])
+2 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 7]
+Verified OR lbs (first 10 items): [[0.1681373119354248], [0.5868395566940308]]
+Unverified OR indices (first 10 items): [1, 2, 3, 4, 5, 6, 8]
+Unverified OR lbs (first 10 items): [[-1.0993021726608276], [-2.5704421997070312], [-2.1673505306243896], [-3.4200611114501953], [-5.135555744171143], [-2.860105514526367], [-0.20668673515319824]]
+Result: unknown in 0.0678 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 13, vnnlib ID: 13 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003932 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-2.11504459, -1.92763436, -0.77872235, -0.04581141, -1.22504604,
+          0.89250517, -1.14444745,  3.12033343, -4.46414948, -1.42371297]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [3.2139816284179688, 2.466691493988037, 1.5127571821212769, 0.3079819679260254, 2.6446008682250977, -0.38040363788604736, 1.386861801147461, 5.0291972160339355, 1.9169365167617798]
+Global lower bound: -0.38040363788604736
+torch.Size([1, 9])
+8 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 1, 2, 3, 4, 6, 7, 8]
+Verified OR lbs (first 10 items): [[3.2139816284179688], [2.466691493988037], [1.5127571821212769], [0.3079819679260254], [2.6446008682250977], [1.386861801147461], [5.0291972160339355], [1.9169365167617798]]
+Unverified OR indices (first 10 items): [5]
+Unverified OR lbs (first 10 items): [[-0.38040363788604736]]
+Result: unknown in 0.0692 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 14, vnnlib ID: 14 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003358 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-1.26343405,  0.91006052, -0.99195772, -0.67923611, -3.35908556,
+         -0.25230470, -2.39643645, -0.76724046, -1.50856495,  3.00184417]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [2.040499687194824, 0.27958083152770996, 1.8134204149246216, 1.9119669198989868, 4.754451274871826, 1.5467479228973389, 3.2704105377197266, 1.7099332809448242, 2.6797661781311035]
+Global lower bound: 0.27958083152770996
+torch.Size([1, 9])
+verified with init bound!
+Result: safe-incomplete in 0.0713 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 15, vnnlib ID: 15 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.005236 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-0.96459603, -2.68055677, -0.42427170,  0.48833218,  0.18451595,
+          0.40522999,  0.27341703, -1.61954713,  0.84875983, -3.27123642]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [-1.0041677951812744, 0.14735668897628784, -2.414693832397461, -3.072258710861206, -3.8558578491210938, -3.19724178314209, -3.8301172256469727, -2.0865299701690674, 0.6993665099143982]
+Global lower bound: -3.8558578491210938
+torch.Size([1, 9])
+2 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [1, 8]
+Verified OR lbs (first 10 items): [[0.14735668897628784], [0.6993665099143982]]
+Unverified OR indices (first 10 items): [0, 2, 3, 4, 5, 6, 7]
+Unverified OR lbs (first 10 items): [[-1.0041677951812744], [-2.414693832397461], [-3.072258710861206], [-3.8558578491210938], [-3.19724178314209], [-3.8301172256469727], [-2.0865299701690674]]
+Result: unknown in 0.0743 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 16, vnnlib ID: 16 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003601 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-2.49736166, -1.54427338, -0.31743264,  2.23061299, -2.20648885,
+          2.17595601, -0.41567272, -0.22527453, -1.74407196, -0.94900608]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [2.6100757122039795, 0.7205613851547241, 1.3165783882141113, -0.8257670402526855, 3.072763204574585, 1.1009654998779297, 1.1232340335845947, 1.9581475257873535, 1.1021628379821777]
+Global lower bound: -0.8257670402526855
+torch.Size([1, 9])
+8 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 1, 2, 4, 5, 6, 7, 8]
+Verified OR lbs (first 10 items): [[2.6100757122039795], [0.7205613851547241], [1.3165783882141113], [3.072763204574585], [1.1009654998779297], [1.1232340335845947], [1.9581475257873535], [1.1021628379821777]]
+Unverified OR indices (first 10 items): [3]
+Unverified OR lbs (first 10 items): [[-0.8257670402526855]]
+Result: unknown in 0.0668 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 17, vnnlib ID: 17 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003424 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-1.54846978, -2.78718305, -0.97190648,  1.05312371, -0.65668780,
+          0.12268810, -1.33510208,  0.93002540, -1.72619021,  0.53213471]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [-0.4202274680137634, 0.38232308626174927, -1.171886920928955, -2.548327922821045, -0.5331499576568604, -1.6895654201507568, -1.114691972732544, -0.06424874067306519, -2.5979936122894287]
+Global lower bound: -2.5979936122894287
+torch.Size([1, 9])
+1 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [1]
+Verified OR lbs (first 10 items): [[0.38232308626174927]]
+Unverified OR indices (first 10 items): [0, 2, 3, 4, 5, 6, 7, 8]
+Unverified OR lbs (first 10 items): [[-0.4202274680137634], [-1.171886920928955], [-2.548327922821045], [-0.5331499576568604], [-1.6895654201507568], [-1.114691972732544], [-0.06424874067306519], [-2.5979936122894287]]
+Result: unknown in 0.0734 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 18, vnnlib ID: 18 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003892 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[ 1.43498063,  1.48747528, -1.74648035, -2.26781273, -1.90499771,
+         -3.41992736, -3.71017194, -3.94164300,  4.16438055,  1.10104704]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [0.7833861112594604, -0.31038618087768555, 3.913229465484619, 4.286409378051758, 3.5646557807922363, 5.4248552322387695, 4.645275115966797, 5.253156661987305, 0.08623504638671875]
+Global lower bound: -0.31038618087768555
+torch.Size([1, 9])
+8 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 2, 3, 4, 5, 6, 7, 8]
+Verified OR lbs (first 10 items): [[0.7833861112594604], [3.913229465484619], [4.286409378051758], [3.5646557807922363], [5.4248552322387695], [4.645275115966797], [5.253156661987305], [0.08623504638671875]]
+Unverified OR indices (first 10 items): [1]
+Unverified OR lbs (first 10 items): [[-0.31038618087768555]]
+Result: unknown in 0.0696 seconds
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% idx: 19, vnnlib ID: 19 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finished vnnlib processing in 0.003490 seconds
+Model: BoundedModule(
+  (/input-1): BoundInput(name=/input-1, inputs=[], perturbed=True)
+  (/1): BoundParams(name=/1, inputs=[], perturbed=False)
+  (/2): BoundParams(name=/2, inputs=[], perturbed=False)
+  (/3): BoundParams(name=/3, inputs=[], perturbed=False)
+  (/4): BoundParams(name=/4, inputs=[], perturbed=False)
+  (/5): BoundParams(name=/5, inputs=[], perturbed=False)
+  (/6): BoundParams(name=/6, inputs=[], perturbed=False)
+  (/7): BoundParams(name=/7, inputs=[], perturbed=False)
+  (/8): BoundParams(name=/8, inputs=[], perturbed=False)
+  (/9): BoundParams(name=/9, inputs=[], perturbed=False)
+  (/10): BoundParams(name=/10, inputs=[], perturbed=False)
+  (/input): BoundConv(name=/input, inputs=[/input-1, /1, /2], perturbed=True)
+  (/input-4): BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+  (/input-8): BoundConv(name=/input-8, inputs=[/input-4, /3, /4], perturbed=True)
+  (/14): BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+  (/15): BoundFlatten(name=/15, inputs=[/14], perturbed=True)
+  (/input-12): BoundLinear(name=/input-12, inputs=[/15, /5, /6], perturbed=True)
+  (/17): BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+  (/input-16): BoundLinear(name=/input-16, inputs=[/17, /7, /8], perturbed=True)
+  (/19): BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+  (/20): BoundLinear(name=/20, inputs=[/19, /9, /10], perturbed=True)
+)
+Original output in the first batch: tensor([[-3.78129363, -2.07711005, -0.31295031,  1.10817742,  1.53812802,
+         -0.41744781,  4.77549076, -1.98276889, -4.50887585, -3.08747721]],
+       device='cuda:0')
+Split layers:
+Nonlinear functions:
+   BoundRelu(name=/input-4, inputs=[/input], perturbed=True)
+   BoundRelu(name=/14, inputs=[/input-8], perturbed=True)
+   BoundRelu(name=/17, inputs=[/input-12], perturbed=True)
+   BoundRelu(name=/19, inputs=[/input-16], perturbed=True)
+build batch [1/1]
+initial crown bounds (first 10 items): [4.033332347869873, 2.9897098541259766, 1.3313941955566406, -0.20234441757202148, -1.588928461074829, -0.004714488983154297, 0.8206305503845215, 3.749958038330078, 3.8782005310058594]
+Global lower bound: -1.588928461074829
+torch.Size([1, 9])
+6 / 9 OR specs are verified.
+Verified OR indices (first 10 items): [0, 1, 2, 6, 7, 8]
+Verified OR lbs (first 10 items): [[4.033332347869873], [2.9897098541259766], [1.3313941955566406], [0.8206305503845215], [3.749958038330078], [3.8782005310058594]]
+Unverified OR indices (first 10 items): [3, 4, 5]
+Unverified OR lbs (first 10 items): [[-0.20234441757202148], [-1.588928461074829], [-0.004714488983154297]]
+Result: unknown in 0.0710 seconds
+############# Summary #############
+Final verified acc: 15.0% (total 20 examples)
+Problem instances count: 20 , total verified (safe/unsat): 3 , total falsified (unsafe/sat): 0 , timeout: 17
+mean time for ALL instances (total 20):0.17471801843399004, max time: 2.0797996520996094
+mean time for verified SAFE instances(total 3): 0.07313625017801921, max time: 0.07871270179748535
+mean time for verified SAFE + TIMEOUT instances (total 20): 0.17471810579299926, max time: 2.0797996520996094 
+unknown (total 17), index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 13, 15, 16, 17, 18, 19]
+safe-incomplete (total 3), index: [9, 11, 14]

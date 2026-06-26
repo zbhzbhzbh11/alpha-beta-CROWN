@@ -1,0 +1,26 @@
+
+
+
+============================================================
+Marabou MNIST Single-Sample Verification
+Time: 2026-05-07 18:57:22
+Sample index: 0
+Epsilon: 0.01
+Timeout per target: 30s
+============================================================
+
+[1/5] Loading MNIST sample...
+  True label: 7
+  Input shape: (1, 28, 28), range: [0.000, 1.000]
+
+[2/5] Running onnxruntime inference...
+  Model prediction: 7
+  Logits: ['-2.683', '-3.914', '2.281', '1.187', '-7.341', '-3.221', '-16.386', '11.636', '-2.313', '-1.836']
+  Prediction matches label: True
+
+[3/5] Loading Marabou ONNX network...
+  Loaded in 0.12s
+  Input variables: 1
+  Output variables: 1
+
+[4/5] Verifying against each target label...

@@ -1,0 +1,8 @@
+run_id=cifar10_kfsb_candidates5
+config=exp_configs/mnist_cifar10_kfsb.yaml
+timestamp=2026-04-10 17:15:32
+hostname=LAPTOP-RGROMBPB
+python=Python 3.10.19
+gpu=NVIDIA GeForce RTX 4060 Laptop GPU
+wall_time_sec=291
+exit_code=0

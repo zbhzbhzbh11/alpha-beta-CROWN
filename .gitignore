@@ -5,7 +5,7 @@ __pycache__
 dist
 *.swp
 *.swo
-*.log
+/*.log
 .trace_graph
 Verified_ret*.npy
 Verified-acc*.npy
@@ -20,9 +20,25 @@ release
 *.compiled
 .DS_Store
 *.out
-*.txt
+/*.txt
 release
 release_abcrown
 cachier
 out.csv
 results.csv
+
+# Large datasets (not needed for repo; auto-downloaded by torchvision)
+data/cifar-10-batches-py/
+data/MNIST/
+
+# External benchmark files (not course output)
+vnncomp_benchmarks/
+
+# Claude Code local settings
+.claude/
+
+# Windows junk files
+*:Zone.Identifier
+~$*
+complete_verifier/out.txt
+complete_verifier/stage1_mnist20_out.txt

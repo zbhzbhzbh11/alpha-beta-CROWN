@@ -1,0 +1,10 @@
+run_id=kfsb_eps0.01
+config=/home/han/alpha-beta-CROWN/complete_verifier/exp_configs/course/m4/mnist_m4_kfsb_eps0.01.yaml
+timestamp=2026-04-03 20:27:37
+hostname=LAPTOP-RGROMBPB
+python=Python 3.10.19
+gpu=NVIDIA GeForce RTX 4060 Laptop GPU
+threads: OMP=4, MKL=4, OPENBLAS=4
+wall_time_sec=37.85
+max_rss_kb=1618064
+exit_code=0
