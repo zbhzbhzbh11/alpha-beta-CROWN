@@ -207,7 +207,7 @@ python abcrown.py --config exp_configs/course/m8_paper_repro/mnist_fcnn_paper_ba
 
 ### 验证策略总对比
 
-**完整对比表**: `项目书/results/verification_strategy_overall_comparison.md`
+**完整对比**: 见结题报告 §4.1 及项目书/最终汇报_实验分析与结论.md §6
 
 | 方法 | 类型 | 证明 safe？ | 发现 unsafe？ | 速度 | 本项目 |
 |---|---|---|---|---|---|
@@ -268,10 +268,10 @@ alpha-beta-CROWN/
 │   │   ├── m6_incomplete/          # M6 结果+报告
 │   │   ├── m7_cifar10/             # M7 结果+报告
 │   │   ├── m8_marabou/             # M8 Marabou 结果+报告
-│   │   ├── Marabou_vs_alpha_beta_CROWN_方法学对比.md
-│   │   ├── verification_strategy_overall_comparison.md
 │   │   └── M2_M3_M4_最终结论表_2026-05-04.md
-│   ├── 项目全景梳理文档.md          # 完整项目全景
+│   ├── 结题报告_软件学报格式.md       # ★ 最终结题论文
+│   ├── 项目全景梳理文档.md
+│   ├── 最终汇报_实验分析与结论.md
 │   └── 开题报告.md
 └── auto_LiRPA/                     # 子模块
 ```
@@ -282,17 +282,21 @@ alpha-beta-CROWN/
 
 | 文档 | 路径 |
 |---|---|
-| 项目全景梳理（含答辩速讲） | `项目书/项目全景梳理文档.md` |
+| **结题报告（最终论文）** | `项目书/结题报告_软件学报格式.md` |
+| 最终实验分析与结论 | `项目书/最终汇报_实验分析与结论.md` |
+| 完成情况汇报 PPT | `项目书/results/完成情况汇报.pptx` |
+| 项目全景梳理 | `项目书/项目全景梳理文档.md` |
+| 开题报告 | `项目书/开题报告.md` |
+| 开题 vs 当前进展对比 | `项目书/开题报告vs当前进展对比.md` |
+| 题目要求 vs 进展对照评分 | `项目书/题目要求vs当前进展_对照与评分.md` |
 | M2/M3/M4 最终结论表 | `项目书/results/M2_M3_M4_最终结论表_2026-05-04.md` |
-| 验证策略总对比表 | `项目书/results/verification_strategy_overall_comparison.md` |
 | M5 PGD 报告 | `项目书/results/m5_pgd/M5_PGD攻击评估结果报告.md` |
 | M6 不完整验证报告 | `项目书/results/m6_incomplete/M6_不完整验证结果报告.md` |
 | M7 CIFAR-10 报告 | `项目书/results/m7_cifar10/M7_CIFAR10不完整验证结果报告.md` |
 | M8 Marabou 对比报告 | `项目书/results/m8_marabou/M8_Marabou_5样本工具对比报告.md` |
 | M8 论文复现方案 | `项目书/论文实验对照与复现方案.md` |
-| 完成情况汇报 PPT | `项目书/results/完成情况汇报.pptx` |
-| 最终实验分析与结论 | `项目书/最终汇报_实验分析与结论.md` |
-| ADO 方法论 | `验证策略与改进方法分析报告.md` |
+| 完整验证链路梳理 | `项目书/完整验证链路梳理.md` |
+| 当前局限分析与解决方案 | `项目书/当前局限分析与解决方案.md` |
 
 ---
 
@@ -300,7 +304,7 @@ alpha-beta-CROWN/
 
 **Q1: M5 和 M4 的 timeout 预算是否一致？**
 
-ε=0.01/0.02 一致（30s），可直接对比。ε=0.03 M5 补跑了 M5-control（timeout=30s 公平对照），结论以对照为准。ε=0.05 两版均降压/分片，对比主要用于工程趋势分析。详见 `verification_strategy_overall_comparison.md` §4。
+ε=0.01/0.02 一致（30s），可直接对比。ε=0.03 M5 补跑了 M5-control（timeout=30s 公平对照），结论以对照为准。ε=0.05 两版均降压/分片，对比主要用于工程趋势分析。详见 `项目书/最终汇报_实验分析与结论.md` §3.4。
 
 **Q2: CIFAR-10 验证为什么比 MNIST 难得多？**
 
@@ -410,14 +414,16 @@ See Chinese version above for full installation and reproduction instructions.
 
 | Document | Path |
 |---|---|
-| Full project overview | `项目书/项目全景梳理文档.md` |
-| Strategy comparison table | `项目书/results/verification_strategy_overall_comparison.md` |
+| **Final paper** | `项目书/结题报告_软件学报格式.md` |
+| Full experiment analysis | `项目书/最终汇报_实验分析与结论.md` |
+| Presentation PPT | `项目书/results/完成情况汇报.pptx` |
+| Project overview | `项目书/项目全景梳理文档.md` |
+| Proposal | `项目书/开题报告.md` |
+| Requirements vs progress | `项目书/题目要求vs当前进展_对照与评分.md` |
 | M5 PGD report | `项目书/results/m5_pgd/M5_PGD攻击评估结果报告.md` |
 | M6 incomplete verif. | `项目书/results/m6_incomplete/M6_不完整验证结果报告.md` |
 | M7 CIFAR-10 report | `项目书/results/m7_cifar10/M7_CIFAR10不完整验证结果报告.md` |
 | M8 Marabou report | `项目书/results/m8_marabou/M8_Marabou_5样本工具对比报告.md` |
-| Final report (Chinese) | `项目书/最终汇报_实验分析与结论.md` |
-| Presentation PPT | `项目书/results/完成情况汇报.pptx` |
 
 ### License & Citation
 
