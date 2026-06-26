@@ -294,7 +294,6 @@ alpha-beta-CROWN/
 | M6 不完整验证报告 | `项目书/results/m6_incomplete/M6_不完整验证结果报告.md` |
 | M7 CIFAR-10 报告 | `项目书/results/m7_cifar10/M7_CIFAR10不完整验证结果报告.md` |
 | M8 Marabou 对比报告 | `项目书/results/m8_marabou/M8_Marabou_5样本工具对比报告.md` |
-| M8 论文复现方案 | `项目书/论文实验对照与复现方案.md` |
 | 完整验证链路梳理 | `项目书/完整验证链路梳理.md` |
 | 当前局限分析与解决方案 | `项目书/当前局限分析与解决方案.md` |
 
